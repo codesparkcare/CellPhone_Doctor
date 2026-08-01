@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "159217464337",
+    "project_id": "the-cellphone-doctor",
+    "storage_bucket": "the-cellphone-doctor.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:159217464337:android:9f27e8d4af5ec6bdec6db0",
+        "android_client_info": {
+          "package_name": "com.thecellphonedoctor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "159217464337-sulcve914041i78inutd74jr048lgu59.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thecellphonedoctor",
+            "certificate_hash": "030b29d8c34103ab569c74b860f1e7b2c7ae7e4a"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQQSGErCmPckWbo-_IUTJfEMxDFQKS5hk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

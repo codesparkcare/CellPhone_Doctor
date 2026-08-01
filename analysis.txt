@@ -1,0 +1,339 @@
+Analyzing cellphone_doctor-master...                            
+
+   info • The file name 'ApiService.dart' isn't a lower_case_with_underscores identifier • lib/ApiService/ApiService.dart:1:1 • file_names
+warning • Unused import: 'package:get/get.dart' • lib/ApiService/ApiService.dart:5:8 • unused_import
+   info • Don't invoke 'print' in production code • lib/ApiService/ApiService.dart:44:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/ApiService/ApiService.dart:45:7 • avoid_print
+   info • Missing type annotation • lib/ApiService/ApiService.dart:64:10 • strict_top_level_inference
+   info • 'required' is deprecated and shouldn't be used. In Dart 2.12 and later, use the built-in `required` keyword to mark a named parameter as required • lib/ApiService/ApiService.dart:65:9 • deprecated_member_use
+   info • 'required' is deprecated and shouldn't be used. In Dart 2.12 and later, use the built-in `required` keyword to mark a named parameter as required • lib/ApiService/ApiService.dart:66:10 • deprecated_member_use
+   info • 'required' is deprecated and shouldn't be used. In Dart 2.12 and later, use the built-in `required` keyword to mark a named parameter as required • lib/ApiService/ApiService.dart:67:10 • deprecated_member_use
+   info • Missing type annotation • lib/ApiService/ApiService.dart:109:10 • strict_top_level_inference
+   info • 'required' is deprecated and shouldn't be used. In Dart 2.12 and later, use the built-in `required` keyword to mark a named parameter as required • lib/ApiService/ApiService.dart:110:9 • deprecated_member_use
+   info • 'required' is deprecated and shouldn't be used. In Dart 2.12 and later, use the built-in `required` keyword to mark a named parameter as required • lib/ApiService/ApiService.dart:111:10 • deprecated_member_use
+   info • 'required' is deprecated and shouldn't be used. In Dart 2.12 and later, use the built-in `required` keyword to mark a named parameter as required • lib/ApiService/ApiService.dart:112:10 • deprecated_member_use
+   info • 'required' is deprecated and shouldn't be used. In Dart 2.12 and later, use the built-in `required` keyword to mark a named parameter as required • lib/ApiService/ApiService.dart:113:10 • deprecated_member_use
+   info • Don't invoke 'print' in production code • lib/ApiService/ApiService.dart:118:5 • avoid_print
+   info • Don't invoke 'print' in production code • lib/ApiService/ApiService.dart:119:5 • avoid_print
+   info • Missing type annotation • lib/ApiService/ApiService.dart:163:10 • strict_top_level_inference
+   info • Don't invoke 'print' in production code • lib/ApiService/ApiService.dart:212:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/ApiService/ApiService.dart:213:7 • avoid_print
+   info • Unnecessary braces in a string interpolation • lib/ApiService/ApiService.dart:213:32 • unnecessary_brace_in_string_interps
+   info • Don't invoke 'print' in production code • lib/ApiService/ApiService.dart:222:7 • avoid_print
+   info • An uninitialized field should have an explicit type annotation • lib/ApiService/ApiService.dart:233:9 • prefer_typing_uninitialized_variables
+   info • Missing type annotation • lib/ApiService/ApiService.dart:233:9 • strict_top_level_inference
+   info • An uninitialized field should have an explicit type annotation • lib/ApiService/ApiService.dart:234:9 • prefer_typing_uninitialized_variables
+   info • Missing type annotation • lib/ApiService/ApiService.dart:234:9 • strict_top_level_inference
+   info • An uninitialized field should have an explicit type annotation • lib/ApiService/ApiService.dart:235:9 • prefer_typing_uninitialized_variables
+   info • Missing type annotation • lib/ApiService/ApiService.dart:235:9 • strict_top_level_inference
+   info • An uninitialized field should have an explicit type annotation • lib/ApiService/ApiService.dart:236:9 • prefer_typing_uninitialized_variables
+   info • Missing type annotation • lib/ApiService/ApiService.dart:236:9 • strict_top_level_inference
+   info • An uninitialized field should have an explicit type annotation • lib/ApiService/ApiService.dart:237:9 • prefer_typing_uninitialized_variables
+   info • Missing type annotation • lib/ApiService/ApiService.dart:237:9 • strict_top_level_inference
+   info • 'required' is deprecated and shouldn't be used. In Dart 2.12 and later, use the built-in `required` keyword to mark a named parameter as required • lib/ApiService/ApiService.dart:241:9 • deprecated_member_use
+   info • 'required' is deprecated and shouldn't be used. In Dart 2.12 and later, use the built-in `required` keyword to mark a named parameter as required • lib/ApiService/ApiService.dart:242:10 • deprecated_member_use
+   info • 'required' is deprecated and shouldn't be used. In Dart 2.12 and later, use the built-in `required` keyword to mark a named parameter as required • lib/ApiService/ApiService.dart:243:10 • deprecated_member_use
+   info • 'required' is deprecated and shouldn't be used. In Dart 2.12 and later, use the built-in `required` keyword to mark a named parameter as required • lib/ApiService/ApiService.dart:244:10 • deprecated_member_use
+   info • Missing type annotation • lib/const/const.dart:10:23 • strict_top_level_inference
+   info • The constant name 'app_accent_color' isn't a lowerCamelCase identifier • lib/const/my_theme.dart:4:22 • constant_identifier_names
+   info • The variable name 'light_sea_green' isn't a lowerCamelCase identifier • lib/const/my_theme.dart:7:16 • non_constant_identifier_names
+   info • The variable name 'medium_sea_green' isn't a lowerCamelCase identifier • lib/const/my_theme.dart:9:16 • non_constant_identifier_names
+   info • The variable name 'very_light_grey' isn't a lowerCamelCase identifier • lib/const/my_theme.dart:15:16 • non_constant_identifier_names
+   info • The variable name 'light_grey' isn't a lowerCamelCase identifier • lib/const/my_theme.dart:16:16 • non_constant_identifier_names
+   info • The variable name 'gull_grey' isn't a lowerCamelCase identifier • lib/const/my_theme.dart:17:16 • non_constant_identifier_names
+   info • The variable name 'storm_grey' isn't a lowerCamelCase identifier • lib/const/my_theme.dart:19:16 • non_constant_identifier_names
+   info • The variable name 'real_review' isn't a lowerCamelCase identifier • lib/const/my_theme.dart:23:16 • non_constant_identifier_names
+   info • The variable name 'icon_premium_color' isn't a lowerCamelCase identifier • lib/const/my_theme.dart:24:16 • non_constant_identifier_names
+   info • The variable name 'gradient_color_1' isn't a lowerCamelCase identifier • lib/const/my_theme.dart:29:16 • non_constant_identifier_names
+   info • The variable name 'gradient_color_2' isn't a lowerCamelCase identifier • lib/const/my_theme.dart:30:16 • non_constant_identifier_names
+   info • The file name 'navBar_controller.dart' isn't a lower_case_with_underscores identifier • lib/controller/navBar_controller.dart:1:1 • file_names
+warning • Unused import: '../screens/service__/service_view.dart' • lib/controller/navBar_controller.dart:7:8 • unused_import
+   info • The file name 'ShowMessageState.dart' isn't a lower_case_with_underscores identifier • lib/helpers/ShowMessageState.dart:1:1 • file_names
+   info • An uninitialized field should have an explicit type annotation • lib/helpers/ShowMessageState.dart:8:7 • prefer_typing_uninitialized_variables
+   info • Missing type annotation • lib/helpers/ShowMessageState.dart:8:7 • strict_top_level_inference
+   info • An uninitialized field should have an explicit type annotation • lib/helpers/ShowMessageState.dart:15:7 • prefer_typing_uninitialized_variables
+   info • Missing type annotation • lib/helpers/ShowMessageState.dart:15:7 • strict_top_level_inference
+   info • The variable name 'show_message_reducer' isn't a lowerCamelCase identifier • lib/helpers/ShowMessageState.dart:19:19 • non_constant_identifier_names
+   info • Missing type annotation • lib/helpers/ShowMessageState.dart:27:1 • strict_top_level_inference
+   info • The variable name 'show_message' isn't a lowerCamelCase identifier • lib/helpers/ShowMessageState.dart:27:1 • non_constant_identifier_names
+   info • Missing type annotation • lib/helpers/auth_helper.dart:6:3 • strict_top_level_inference
+   info • Missing type annotation • lib/helpers/auth_helper.dart:11:10 • strict_top_level_inference
+   info • Missing type annotation • lib/helpers/auth_helper.dart:16:10 • strict_top_level_inference
+   info • Missing type annotation • lib/helpers/auth_helper.dart:21:10 • strict_top_level_inference
+   info • Missing type annotation • lib/helpers/auth_helper.dart:26:10 • strict_top_level_inference
+   info • Missing type annotation • lib/helpers/auth_helper.dart:31:10 • strict_top_level_inference
+   info • Missing type annotation • lib/helpers/auth_helper.dart:36:10 • strict_top_level_inference
+   info • Missing type annotation • lib/helpers/auth_helper.dart:41:10 • strict_top_level_inference
+   info • Missing type annotation • lib/helpers/auth_helper.dart:46:10 • strict_top_level_inference
+warning • Unused import: 'controller/navBar_controller.dart' • lib/main.dart:8:8 • unused_import
+   info • Dangling library doc comment • lib/models/app/GetCartListResponseModel.dart:1:1 • dangling_library_doc_comments
+   info • The file name 'GetCartListResponseModel.dart' isn't a lower_case_with_underscores identifier • lib/models/app/GetCartListResponseModel.dart:1:1 • file_names
+   info • Dangling library doc comment • lib/models/app/GetSparePartsResponseModelNew.dart:1:1 • dangling_library_doc_comments
+   info • The file name 'GetSparePartsResponseModelNew.dart' isn't a lower_case_with_underscores identifier • lib/models/app/GetSparePartsResponseModelNew.dart:1:1 • file_names
+   info • The variable name 'warranty_discription' isn't a lowerCamelCase identifier • lib/models/app/GetSparePartsResponseModelNew.dart:184:15 • non_constant_identifier_names
+   info • The variable name '_warranty_discription' isn't a lowerCamelCase identifier • lib/models/app/GetSparePartsResponseModelNew.dart:265:11 • non_constant_identifier_names
+   info • The variable name 'warranty_discription' isn't a lowerCamelCase identifier • lib/models/app/GetSparePartsResponseModelNew.dart:289:11 • non_constant_identifier_names
+   info • The variable name 'warranty_discription' isn't a lowerCamelCase identifier • lib/models/app/GetSparePartsResponseModelNew.dart:339:15 • non_constant_identifier_names
+   info • Dangling library doc comment • lib/models/app/getBrandListModel.dart:1:1 • dangling_library_doc_comments
+   info • The file name 'getBrandListModel.dart' isn't a lower_case_with_underscores identifier • lib/models/app/getBrandListModel.dart:1:1 • file_names
+   info • Dangling library doc comment • lib/models/app/getHistoryResponseModel.dart:1:1 • dangling_library_doc_comments
+   info • The file name 'getHistoryResponseModel.dart' isn't a lower_case_with_underscores identifier • lib/models/app/getHistoryResponseModel.dart:1:1 • file_names
+   info • Don't invoke 'print' in production code • lib/models/app/getHistoryResponseModel.dart:121:13 • avoid_print
+   info • Dangling library doc comment • lib/models/app/getHomeListModel.dart:1:1 • dangling_library_doc_comments
+   info • The file name 'getHomeListModel.dart' isn't a lower_case_with_underscores identifier • lib/models/app/getHomeListModel.dart:1:1 • file_names
+   info • Missing type annotation • lib/models/app/getHomeListModel.dart:587:7 • strict_top_level_inference
+   info • The variable name 'Dynamic' isn't a lowerCamelCase identifier • lib/models/app/getHomeListModel.dart:587:7 • non_constant_identifier_names
+   info • Missing type annotation • lib/models/app/getHomeListModel.dart:787:7 • strict_top_level_inference
+   info • The variable name 'Dynamic' isn't a lowerCamelCase identifier • lib/models/app/getHomeListModel.dart:787:7 • non_constant_identifier_names
+   info • Dangling library doc comment • lib/models/app/getNearByStoreResponseModel.dart:1:1 • dangling_library_doc_comments
+   info • The file name 'getNearByStoreResponseModel.dart' isn't a lower_case_with_underscores identifier • lib/models/app/getNearByStoreResponseModel.dart:1:1 • file_names
+   info • The file name 'getProfileResponseModel.dart' isn't a lower_case_with_underscores identifier • lib/models/app/getProfileResponseModel.dart:1:1 • file_names
+   info • Dangling library doc comment • lib/models/app/getSelectModelResponse.dart:1:1 • dangling_library_doc_comments
+   info • The file name 'getSelectModelResponse.dart' isn't a lower_case_with_underscores identifier • lib/models/app/getSelectModelResponse.dart:1:1 • file_names
+   info • Dangling library doc comment • lib/models/app/getSparePartsResponseModel.dart:1:1 • dangling_library_doc_comments
+   info • The file name 'getSparePartsResponseModel.dart' isn't a lower_case_with_underscores identifier • lib/models/app/getSparePartsResponseModel.dart:1:1 • file_names
+   info • Dangling library doc comment • lib/models/app/getSpareResponseModel.dart:1:1 • dangling_library_doc_comments
+   info • The file name 'getSpareResponseModel.dart' isn't a lower_case_with_underscores identifier • lib/models/app/getSpareResponseModel.dart:1:1 • file_names
+   info • Dangling library doc comment • lib/models/app/getStoryListReponseModel.dart:1:1 • dangling_library_doc_comments
+   info • The file name 'getStoryListReponseModel.dart' isn't a lower_case_with_underscores identifier • lib/models/app/getStoryListReponseModel.dart:1:1 • file_names
+   info • Unnecessary 'this.' qualifier • lib/models/app/review_model.dart:30:9 • unnecessary_this
+   info • Unnecessary 'this.' qualifier • lib/models/app/review_model.dart:31:23 • unnecessary_this
+   info • Dangling library doc comment • lib/models/auth/LoginResponseModel.dart:1:1 • dangling_library_doc_comments
+   info • The file name 'LoginResponseModel.dart' isn't a lower_case_with_underscores identifier • lib/models/auth/LoginResponseModel.dart:1:1 • file_names
+   info • 'desiredAccuracy' is deprecated and shouldn't be used. use settings parameter with AndroidSettings, AppleSettings, WebSettings, or LocationSettings • lib/screens/AddressScreen/Address_Controller/address_controller.dart:58:13 • deprecated_member_use
+   info • Don't invoke 'print' in production code • lib/screens/AddressScreen/Address_Controller/address_controller.dart:64:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/AddressScreen/Address_Controller/address_controller.dart:91:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/AddressScreen/Address_Controller/address_controller.dart:121:7 • avoid_print
+warning • This class (or a class that this class inherits from) is marked as '@immutable', but one or more of its instance fields aren't final: SelectAddressScreen.type • lib/screens/AddressScreen/address_view.dart:8:7 • must_be_immutable
+warning • Unused import: '../../login/model/common_response_model.dart' • lib/screens/Auth/controller/auth_controller.dart:4:8 • unused_import
+   info • Don't invoke 'print' in production code • lib/screens/Auth/login_screen.dart:32:5 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/Auth/login_screen.dart:45:11 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/Auth/login_screen.dart:59:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/Auth/login_screen.dart:60:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/Auth/login_screen.dart:65:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/Auth/login_screen.dart:73:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/Auth/login_screen.dart:87:7 • avoid_print
+   info • The local variable '_formKey' starts with an underscore • lib/screens/Auth/login_screen.dart:95:11 • no_leading_underscores_for_local_identifiers
+warning • The value of the local variable '_formKey' isn't used • lib/screens/Auth/login_screen.dart:95:11 • unused_local_variable
+warning • The value of the local variable 'controller' isn't used • lib/screens/Auth/login_screen.dart:96:26 • unused_local_variable
+warning • The value of the local variable 'aspectRatio' isn't used • lib/screens/Auth/login_screen.dart:98:18 • unused_local_variable
+   info • The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' • lib/screens/BottomNav/bottom_nav.dart:2:8 • unnecessary_import
+   info • The import of 'package:get/get_core/src/get_main.dart' is unnecessary because all of the used elements are also provided by the import of 'package:get/get.dart' • lib/screens/BottomNav/bottom_nav.dart:4:8 • unnecessary_import
+   info • The import of 'package:get/get_state_manager/src/simple/get_state.dart' is unnecessary because all of the used elements are also provided by the import of 'package:get/get.dart' • lib/screens/BottomNav/bottom_nav.dart:5:8 • unnecessary_import
+   info • 'VideoPlayerController.network' is deprecated and shouldn't be used. Use VideoPlayerController.networkUrl instead • lib/screens/CourseView/controller/course_controller.dart:51:19 • deprecated_member_use
+warning • Unused import: 'package:flutter_widget_from_html/flutter_widget_from_html.dart' • lib/screens/CourseView/course_view.dart:4:8 • unused_import
+   info • The import of 'package:get/get_core/src/get_main.dart' is unnecessary because all of the used elements are also provided by the import of 'package:get/get.dart' • lib/screens/CourseView/course_view.dart:7:8 • unnecessary_import
+   info • The import of 'package:get/get_state_manager/src/simple/get_state.dart' is unnecessary because all of the used elements are also provided by the import of 'package:get/get.dart' • lib/screens/CourseView/course_view.dart:8:8 • unnecessary_import
+warning • Unused import: '../../utils/app_colors.dart' • lib/screens/CourseView/course_view.dart:11:8 • unused_import
+   info • Use a 'SizedBox' to add whitespace to a layout • lib/screens/CourseView/course_view.dart:49:19 • sized_box_for_whitespace
+warning • Unused import: 'package:cellphone_doctor/screens/login/model/common_response_model.dart' • lib/screens/ProfileView/create_profile.dart:1:8 • unused_import
+warning • This class (or a class that this class inherits from) is marked as '@immutable', but one or more of its instance fields aren't final: CreateProfileScreen.token, CreateProfileScreen.number • lib/screens/ProfileView/create_profile.dart:10:7 • must_be_immutable
+   info • Don't use 'BuildContext's across async gaps • lib/screens/ProfileView/create_profile.dart:76:7 • use_build_context_synchronously
+   info • The file name 'profile-controller.dart' isn't a lower_case_with_underscores identifier • lib/screens/ProfileView/profile_controller/profile-controller.dart:1:1 • file_names
+warning • Unused import: '../service_detail/service_detail_view.dart' • lib/screens/ProfileView/profile_view.dart:14:8 • unused_import
+warning • Unused import: 'create_profile.dart' • lib/screens/ProfileView/profile_view.dart:15:8 • unused_import
+   info • The import of 'package:get/get_core/src/get_main.dart' is unnecessary because all of the used elements are also provided by the import of 'package:get/get.dart' • lib/screens/ProfileView/update_profile.dart:4:8 • unnecessary_import
+warning • Unused import: '../../helpers/auth_helper.dart' • lib/screens/ProfileView/update_profile.dart:7:8 • unused_import
+   info • The private field _isLoading could be 'final' • lib/screens/ProfileView/update_profile.dart:23:8 • prefer_final_fields
+   info • Don't invoke 'print' in production code • lib/screens/ProfileView/update_profile.dart:82:5 • avoid_print
+   info • Don't use 'BuildContext's across async gaps • lib/screens/ProfileView/update_profile.dart:84:23 • use_build_context_synchronously
+   info • 'VideoPlayerController.network' is deprecated and shouldn't be used. Use VideoPlayerController.networkUrl instead • lib/screens/ReviewView/controller/review_controller.dart:49:50 • deprecated_member_use
+warning • Unused import: 'package:chewie/chewie.dart' • lib/screens/ReviewView/review_view.dart:5:8 • unused_import
+warning • Unused import: 'package:cellphone_doctor/models/app/review_model.dart' • lib/screens/ReviewView/review_view.dart:12:8 • unused_import
+   info • Use a 'SizedBox' to add whitespace to a layout • lib/screens/ReviewView/review_view.dart:90:21 • sized_box_for_whitespace
+   info • Don't use 'BuildContext's across async gaps • lib/screens/ReviewView/review_view.dart:488:44 • use_build_context_synchronously
+   info • Use interpolation to compose strings and values • lib/screens/ServiceHistory/service_history_view.dart:48:24 • prefer_interpolation_to_compose_strings
+warning • The left operand can't be null, so the right operand is never executed • lib/screens/ServiceHistory/service_history_view.dart:138:77 • dead_null_aware_expression
+   info • Don't invoke 'print' in production code • lib/screens/ServiceHistory/service_history_view.dart:177:7 • avoid_print
+   info • Unnecessary braces in a string interpolation • lib/screens/ServiceHistory/service_history_view.dart:177:18 • unnecessary_brace_in_string_interps
+   info • Don't invoke 'print' in production code • lib/screens/ServiceHistory/service_history_view.dart:186:7 • avoid_print
+   info • Unnecessary braces in a string interpolation • lib/screens/ServiceHistory/service_history_view.dart:186:22 • unnecessary_brace_in_string_interps
+   info • Don't use 'BuildContext's across async gaps • lib/screens/ServiceHistory/service_history_view.dart:190:20 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps • lib/screens/ServiceHistory/service_history_view.dart:206:16 • use_build_context_synchronously
+   info • Don't invoke 'print' in production code • lib/screens/ServiceHistory/service_history_view.dart:207:5 • avoid_print
+   info • Missing type annotation • lib/screens/ServiceHistory/service_history_view.dart:210:3 • strict_top_level_inference
+   info • Don't invoke 'print' in production code • lib/screens/ServiceHistory/service_history_view.dart:216:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/ServiceHistory/service_history_view.dart:223:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/ServiceHistory/service_history_view.dart:224:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/ServiceHistory/service_history_view.dart:232:13 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/ServiceHistory/service_history_view.dart:237:11 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/ServiceHistory/service_history_view.dart:238:11 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/ServiceHistory/service_history_view.dart:245:13 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/ServiceHistory/service_history_view.dart:249:11 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/ServiceHistory/service_history_view.dart:250:11 • avoid_print
+   info • Don't use 'BuildContext's across async gaps • lib/screens/ServiceHistory/service_history_view.dart:253:32 • use_build_context_synchronously
+   info • Don't invoke 'print' in production code • lib/screens/ServiceHistory/service_history_view.dart:258:9 • avoid_print
+   info • Don't use 'BuildContext's across async gaps • lib/screens/ServiceHistory/service_history_view.dart:260:30 • use_build_context_synchronously
+   info • Don't invoke 'print' in production code • lib/screens/ServiceHistory/service_history_view.dart:265:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/ServiceHistory/service_history_view.dart:266:7 • avoid_print
+   info • Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check • lib/screens/ServiceHistory/service_history_view.dart:269:28 • use_build_context_synchronously
+   info • Don't invoke 'print' in production code • lib/screens/ServiceHistory/service_history_view.dart:413:5 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/ServiceHistory/service_history_view.dart:435:5 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/ServiceHistory/service_history_view.dart:446:5 • avoid_print
+warning • The '!' will have no effect because the receiver can't be null • lib/screens/ServiceHistory/service_history_view.dart:998:29 • unnecessary_non_null_assertion
+   info • Unnecessary use of 'toList' in a spread • lib/screens/ServiceHistory/service_history_view.dart:1117:16 • unnecessary_to_list_in_spreads
+   info • The file name 'WebScreen.dart' isn't a lower_case_with_underscores identifier • lib/screens/WebScreen.dart:1:1 • file_names
+warning • This class (or a class that this class inherits from) is marked as '@immutable', but one or more of its instance fields aren't final: Webscreen.url, Webscreen.title • lib/screens/WebScreen.dart:4:7 • must_be_immutable
+   info • The file name 'cartView.dart' isn't a lower_case_with_underscores identifier • lib/screens/cart/cartView.dart:1:1 • file_names
+warning • Unused import: 'dart:math' • lib/screens/cart/cartView.dart:1:8 • unused_import
+   info • Use interpolation to compose strings and values • lib/screens/cart/cartView.dart:61:24 • prefer_interpolation_to_compose_strings
+   info • Unnecessary braces in a string interpolation • lib/screens/cart/cartView.dart:73:28 • unnecessary_brace_in_string_interps
+   info • Missing type annotation • lib/screens/cart/cartView.dart:91:3 • strict_top_level_inference
+   info • Don't invoke 'print' in production code • lib/screens/cart/cartView.dart:104:11 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/cart/cartView.dart:148:7 • avoid_print
+   info • Missing type annotation • lib/screens/cart/cartView.dart:164:3 • strict_top_level_inference
+warning • The value of the local variable 'currentAmount' isn't used • lib/screens/cart/cartView.dart:237:14 • unused_local_variable
+warning • The value of the local variable 'continueButton' isn't used • lib/screens/cart/cartView.dart:299:12 • unused_local_variable
+warning • The value of the local variable 'size' isn't used • lib/screens/cart/cartView.dart:579:11 • unused_local_variable
+   info • 'WillPopScope' is deprecated and shouldn't be used. Use PopScope instead. The Android predictive back feature will not work with WillPopScope. This feature was deprecated after v3.12.0-1.0.pre • lib/screens/cart/cartView.dart:581:12 • deprecated_member_use
+   info • Unnecessary use of multiple underscores • lib/screens/cart/cartView.dart:645:53 • unnecessary_underscores
+   info • Unnecessary use of multiple underscores • lib/screens/cart/cartView.dart:645:57 • unnecessary_underscores
+   info • Don't invoke 'print' in production code • lib/screens/cart/cartView.dart:801:35 • avoid_print
+   info • Unnecessary use of 'toList' in a spread • lib/screens/cart/cartView.dart:821:24 • unnecessary_to_list_in_spreads
+   info • Unnecessary use of multiple underscores • lib/screens/cart/cartView.dart:1076:53 • unnecessary_underscores
+warning • The value of the local variable 'lat' isn't used • lib/screens/cart/cartView.dart:1553:14 • unused_local_variable
+warning • The value of the local variable 'lng' isn't used • lib/screens/cart/cartView.dart:1554:14 • unused_local_variable
+warning • The value of the local variable 'tag' isn't used • lib/screens/cart/cartView.dart:1556:14 • unused_local_variable
+warning • The value of the local variable 'lat' isn't used • lib/screens/cart/cartView.dart:1572:14 • unused_local_variable
+warning • The value of the local variable 'lng' isn't used • lib/screens/cart/cartView.dart:1573:14 • unused_local_variable
+warning • The value of the local variable 'tag' isn't used • lib/screens/cart/cartView.dart:1575:14 • unused_local_variable
+   info • 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre • lib/screens/cart/cartView.dart:1612:17 • deprecated_member_use
+   info • 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre • lib/screens/cart/cartView.dart:1613:17 • deprecated_member_use
+   info • Parameter 'key' could be a super parameter • lib/screens/cart/cartView.dart:1698:9 • use_super_parameters
+   info • Unnecessary use of getter and setter to wrap a field • lib/screens/cart/cart_controller/car_controller.dart:39:14 • unnecessary_getters_setters
+warning • The value of the field '_searchController' isn't used • lib/screens/home_view__/home_screen.dart:51:31 • unused_field
+   info • The private field _speechToText could be 'final' • lib/screens/home_view__/home_screen.dart:56:20 • prefer_final_fields
+warning • The value of the field '_isSearching' isn't used • lib/screens/home_view__/home_screen.dart:63:8 • unused_field
+warning • The value of the field '_searchResults' isn't used • lib/screens/home_view__/home_screen.dart:64:14 • unused_field
+   info • The private field _expandCategories could be 'final' • lib/screens/home_view__/home_screen.dart:65:8 • prefer_final_fields
+warning • The value of the field '_timer' isn't used • lib/screens/home_view__/home_screen.dart:68:10 • unused_field
+   info • Missing type annotation • lib/screens/home_view__/home_screen.dart:70:3 • strict_top_level_inference
+   info • Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check • lib/screens/home_view__/home_screen.dart:100:9 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps • lib/screens/home_view__/home_screen.dart:236:40 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps • lib/screens/home_view__/home_screen.dart:237:35 • use_build_context_synchronously
+   info • Unnecessary use of multiple underscores • lib/screens/home_view__/home_screen.dart:671:49 • unnecessary_underscores
+warning • The value of the local variable 'isCollapsed' isn't used • lib/screens/home_view__/home_screen.dart:680:34 • unused_local_variable
+   info • Unnecessary use of multiple underscores • lib/screens/home_view__/home_screen.dart:688:49 • unnecessary_underscores
+warning • The declaration '_buildCategoryBar' isn't referenced • lib/screens/home_view__/home_screen.dart:923:8 • unused_element
+   info • Unnecessary use of multiple underscores • lib/screens/home_view__/home_screen.dart:947:29 • unnecessary_underscores
+warning • The declaration '_SafeAreaHeaderDelegate' isn't referenced • lib/screens/home_view__/home_screen.dart:973:7 • unused_element
+   info • Parameter 'key' could be a super parameter • lib/screens/home_view__/home_screen.dart:1013:9 • use_super_parameters
+   info • The variable name '_CategoryHeader' isn't a lowerCamelCase identifier • lib/screens/home_view__/home_screen.dart:1258:8 • non_constant_identifier_names
+   info • Unnecessary use of multiple underscores • lib/screens/home_view__/home_screen.dart:1267:31 • unnecessary_underscores
+   info • Unnecessary use of multiple underscores • lib/screens/home_view__/home_screen.dart:1296:35 • unnecessary_underscores
+   info • The file name 'StoryService.dart' isn't a lower_case_with_underscores identifier • lib/screens/home_view__/home_widgets/StorySection/StoryService.dart:1:1 • file_names
+warning • The value of the local variable 'responseData' isn't used • lib/screens/home_view__/home_widgets/StorySection/StoryService.dart:65:13 • unused_local_variable
+warning • Unused import: 'package:cellphone_doctor/screens/home_view__/home_widgets/StorySection/story_modal.dart' • lib/screens/home_view__/home_widgets/StorySection/story_controller.dart:4:8 • unused_import
+   info • The imported package 'flutter_cache_manager' isn't a dependency of the importing package • lib/screens/home_view__/home_widgets/StorySection/story_controller.dart:6:8 • depend_on_referenced_packages
+   info • Don't invoke 'print' in production code • lib/screens/home_view__/home_widgets/StorySection/story_controller.dart:39:9 • avoid_print
+warning • Unused import: 'package:cellphone_doctor/utils/app_colors.dart' • lib/screens/home_view__/home_widgets/StorySection/story_section.dart:4:8 • unused_import
+   info • The import of 'package:get/get_core/src/get_main.dart' is unnecessary because all of the used elements are also provided by the import of 'package:get/get.dart' • lib/screens/home_view__/home_widgets/StorySection/story_section.dart:12:8 • unnecessary_import
+warning • Unused import: 'package:cellphone_doctor/ApiService/ApiService.dart' • lib/screens/home_view__/home_widgets/StorySection/story_section.dart:20:8 • unused_import
+   info • Constructors in '@immutable' classes should be declared as 'const' • lib/screens/home_view__/home_widgets/StorySection/story_section.dart:25:3 • prefer_const_constructors_in_immutables
+   info • The private field _expandStories could be 'final' • lib/screens/home_view__/home_widgets/StorySection/story_section.dart:34:8 • prefer_final_fields
+warning • The value of the field '_expandStories' isn't used • lib/screens/home_view__/home_widgets/StorySection/story_section.dart:34:8 • unused_field
+   info • Unnecessary instance of 'Container' • lib/screens/home_view__/home_widgets/StorySection/story_section.dart:57:15 • avoid_unnecessary_containers
+   info • Unnecessary use of multiple underscores • lib/screens/home_view__/home_widgets/StorySection/story_section.dart:97:37 • unnecessary_underscores
+   info • Constructors in '@immutable' classes should be declared as 'const' • lib/screens/home_view__/home_widgets/StorySection/story_section.dart:120:3 • prefer_const_constructors_in_immutables
+warning • A value for optional parameter 'key' isn't ever given • lib/screens/home_view__/home_widgets/StorySection/story_section.dart:120:27 • unused_element_parameter
+   info • Don't invoke 'print' in production code • lib/screens/home_view__/home_widgets/StorySection/story_section.dart:222:9 • avoid_print
+   info • Don't use 'BuildContext's across async gaps • lib/screens/home_view__/home_widgets/StorySection/story_section.dart:252:23 • use_build_context_synchronously
+   info • Don't invoke 'print' in production code • lib/screens/home_view__/home_widgets/StorySection/story_section.dart:424:7 • avoid_print
+warning • Unused import: 'dart:ui' • lib/screens/home_view__/home_widgets/StorySection/story_viewer.dart:8:8 • unused_import
+warning • Unused import: 'dart:typed_data' • lib/screens/home_view__/home_widgets/StorySection/story_viewer.dart:9:8 • unused_import
+warning • Unused import: 'package:video_thumbnail/video_thumbnail.dart' • lib/screens/home_view__/home_widgets/StorySection/story_viewer.dart:10:8 • unused_import
+warning • Unused import: 'package:cellphone_doctor/screens/home_view__/home_widgets/StorySection/story_controller.dart' • lib/screens/home_view__/home_widgets/StorySection/story_viewer.dart:12:8 • unused_import
+   info • The imported package 'flutter_cache_manager' isn't a dependency of the importing package • lib/screens/home_view__/home_widgets/StorySection/story_viewer.dart:14:8 • depend_on_referenced_packages
+   info • The file name 'Strore_section.dart' isn't a lower_case_with_underscores identifier • lib/screens/home_view__/home_widgets/Strore_section.dart:1:1 • file_names
+   info • Unnecessary instance of 'Container' • lib/screens/home_view__/home_widgets/Strore_section.dart:25:15 • avoid_unnecessary_containers
+   info • Don't invoke 'print' in production code • lib/screens/home_view__/home_widgets/Strore_section.dart:168:47 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/home_view__/home_widgets/Strore_section.dart:196:47 • avoid_print
+warning • Unused import: '../../../utils/app_colors.dart' • lib/screens/home_view__/home_widgets/did_u_know.dart:7:8 • unused_import
+   info • The file name 'ourProcessSection.dart' isn't a lower_case_with_underscores identifier • lib/screens/home_view__/home_widgets/ourProcessSection.dart:1:1 • file_names
+warning • Unused import: 'package:cellphone_doctor/utils/app-sizes.dart' • lib/screens/home_view__/home_widgets/ourProcessSection.dart:1:8 • unused_import
+warning • Unused import: 'dart:ui' • lib/screens/home_view__/home_widgets/ourProcessSection.dart:2:8 • unused_import
+warning • Unused import: '../../../utils/app_colors.dart' • lib/screens/home_view__/home_widgets/ourProcessSection.dart:6:8 • unused_import
+warning • Unused import: 'package:cellphone_doctor/utils/app_colors.dart' • lib/screens/home_view__/home_widgets/service_section.dart:5:8 • unused_import
+   info • Constructors in '@immutable' classes should be declared as 'const' • lib/screens/home_view__/home_widgets/service_section.dart:17:3 • prefer_const_constructors_in_immutables
+   info • The file name 'topBrand_section.dart' isn't a lower_case_with_underscores identifier • lib/screens/home_view__/home_widgets/topBrand_section.dart:1:1 • file_names
+warning • Unused import: 'package:cellphone_doctor/screens/service__/service_view.dart' • lib/screens/home_view__/home_widgets/topBrand_section.dart:3:8 • unused_import
+warning • Unused import: 'package:cellphone_doctor/utils/app_colors.dart' • lib/screens/home_view__/home_widgets/topBrand_section.dart:5:8 • unused_import
+   info • The file name 'whyUs_section.dart' isn't a lower_case_with_underscores identifier • lib/screens/home_view__/home_widgets/whyUs_section.dart:1:1 • file_names
+   info • Unnecessary instance of 'Container' • lib/screens/home_view__/home_widgets/whyUs_section.dart:18:11 • avoid_unnecessary_containers
+   info • The file name 'AuthController.dart' isn't a lower_case_with_underscores identifier • lib/screens/login/AuthController.dart:1:1 • file_names
+warning • Unused import: 'package:cellphone_doctor/screens/login/model/common_response_model.dart' • lib/screens/login/AuthController.dart:1:8 • unused_import
+warning • Unused import: '../../../services/api_service.dart' • lib/screens/login/AuthController.dart:3:8 • unused_import
+warning • Unused import: '../otp___/otpView.dart' • lib/screens/login/AuthController.dart:5:8 • unused_import
+   info • Parameter 'key' could be a super parameter • lib/screens/login/login_screen.dart:8:9 • use_super_parameters
+warning • Unused import: 'package:cellphone_doctor/screens/service__/service_view.dart' • lib/screens/main_screen.dart:4:8 • unused_import
+warning • Unused import: 'package:flutter/services.dart' • lib/screens/main_screen.dart:6:8 • unused_import
+   info • The import of 'package:get/get_core/src/get_main.dart' is unnecessary because all of the used elements are also provided by the import of 'package:get/get.dart' • lib/screens/main_screen.dart:8:8 • unnecessary_import
+warning • Unused import: 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart' • lib/screens/main_screen.dart:9:8 • unused_import
+warning • Unused import: 'dart:convert' • lib/screens/otp___/OtpController/otp_controller.dart:2:8 • unused_import
+   info • Unnecessary braces in a string interpolation • lib/screens/otp___/OtpController/otp_controller.dart:44:41 • unnecessary_brace_in_string_interps
+   info • Don't invoke 'print' in production code • lib/screens/otp___/OtpController/otp_controller.dart:58:11 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/otp___/OtpController/otp_controller.dart:64:11 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/otp___/OtpController/otp_controller.dart:88:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/otp___/OtpController/otp_controller.dart:122:7 • avoid_print
+warning • The left operand can't be null, so the right operand is never executed • lib/screens/otp___/OtpController/otp_controller.dart:130:74 • dead_null_aware_expression
+   info • Don't invoke 'print' in production code • lib/screens/otp___/OtpController/otp_controller.dart:144:7 • avoid_print
+   info • The file name 'otpView.dart' isn't a lower_case_with_underscores identifier • lib/screens/otp___/otpView.dart:1:1 • file_names
+   info • The import of 'package:get/get_core/src/get_main.dart' is unnecessary because all of the used elements are also provided by the import of 'package:get/get.dart' • lib/screens/otp___/otpView.dart:6:8 • unnecessary_import
+warning • Unused import: '../ProfileView/create_profile.dart' • lib/screens/otp___/otpView.dart:8:8 • unused_import
+warning • Unused import: '../main_screen.dart' • lib/screens/otp___/otpView.dart:9:8 • unused_import
+warning • Unused import: '../service_detail/service_detail_view.dart' • lib/screens/otp___/otpView.dart:10:8 • unused_import
+warning • This class (or a class that this class inherits from) is marked as '@immutable', but one or more of its instance fields aren't final: OtpView.number, OtpView.id • lib/screens/otp___/otpView.dart:12:7 • must_be_immutable
+   info • The private field _otpController could be 'final' • lib/screens/otp___/otpView.dart:23:25 • prefer_final_fields
+   info • The private field _otpFocusNode could be 'final' • lib/screens/otp___/otpView.dart:24:13 • prefer_final_fields
+warning • The value of the local variable 'controller' isn't used • lib/screens/otp___/otpView.dart:50:25 • unused_local_variable
+warning • The value of the local variable 'aspectRatio' isn't used • lib/screens/otp___/otpView.dart:53:18 • unused_local_variable
+   info • Don't invoke 'print' in production code • lib/screens/otp___/otpView.dart:165:25 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/otp___/otpView.dart:168:25 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/otp___/otpView.dart:237:21 • avoid_print
+   info • Don't invoke 'print' in production code • lib/screens/otp___/otpView.dart:240:21 • avoid_print
+warning • Unused import: '../Auth/login_screen.dart' • lib/screens/service__/select_modal.dart:9:8 • unused_import
+   info • An uninitialized field should have an explicit type annotation • lib/screens/service__/select_modal.dart:13:9 • prefer_typing_uninitialized_variables
+   info • Missing type annotation • lib/screens/service__/select_modal.dart:13:9 • strict_top_level_inference
+   info • An uninitialized field should have an explicit type annotation • lib/screens/service__/select_modal.dart:14:9 • prefer_typing_uninitialized_variables
+   info • Missing type annotation • lib/screens/service__/select_modal.dart:14:9 • strict_top_level_inference
+   info • The private field _searchController could be 'final' • lib/screens/service__/select_modal.dart:25:25 • prefer_final_fields
+   info • Missing type annotation • lib/screens/service__/select_modal.dart:34:3 • strict_top_level_inference
+   info • Invalid use of a private type in a public API • lib/screens/service__/service_view.dart:18:3 • library_private_types_in_public_api
+   info • The import of 'package:get/get_core/src/get_main.dart' is unnecessary because all of the used elements are also provided by the import of 'package:get/get.dart' • lib/screens/service_detail/service_detail_view.dart:5:8 • unnecessary_import
+   info • An uninitialized field should have an explicit type annotation • lib/screens/service_detail/service_detail_view.dart:15:9 • prefer_typing_uninitialized_variables
+   info • Missing type annotation • lib/screens/service_detail/service_detail_view.dart:15:9 • strict_top_level_inference
+   info • An uninitialized field should have an explicit type annotation • lib/screens/service_detail/service_detail_view.dart:16:9 • prefer_typing_uninitialized_variables
+   info • Missing type annotation • lib/screens/service_detail/service_detail_view.dart:16:9 • strict_top_level_inference
+   info • An uninitialized field should have an explicit type annotation • lib/screens/service_detail/service_detail_view.dart:17:9 • prefer_typing_uninitialized_variables
+   info • Missing type annotation • lib/screens/service_detail/service_detail_view.dart:17:9 • strict_top_level_inference
+   info • The private field _isAddingToCart could be 'final' • lib/screens/service_detail/service_detail_view.dart:29:21 • prefer_final_fields
+   info • The private field _isRemovingFromCart could be 'final' • lib/screens/service_detail/service_detail_view.dart:30:21 • prefer_final_fields
+   info • Don't use 'BuildContext's across async gaps • lib/screens/service_detail/service_detail_view.dart:114:15 • use_build_context_synchronously
+   info • Don't invoke 'print' in production code • lib/screens/service_detail/service_detail_view.dart:224:7 • avoid_print
+warning • The '!' will have no effect because the receiver can't be null • lib/screens/service_detail/service_detail_view.dart:239:44 • unnecessary_non_null_assertion
+   info • An uninitialized variable should have an explicit type annotation • lib/screens/service_detail/service_detail_view.dart:267:9 • prefer_typing_uninitialized_variables
+warning • The left operand can't be null, so the right operand is never executed • lib/screens/service_detail/service_detail_view.dart:290:61 • dead_null_aware_expression
+   info • Don't use 'BuildContext's across async gaps • lib/screens/service_detail/service_detail_view.dart:330:17 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps • lib/screens/service_detail/service_detail_view.dart:380:13 • use_build_context_synchronously
+warning • The value of the local variable 'size' isn't used • lib/screens/service_detail/service_detail_view.dart:464:11 • unused_local_variable
+warning • The left operand can't be null, so the right operand is never executed • lib/screens/service_detail/service_detail_view.dart:504:57 • dead_null_aware_expression
+warning • The left operand can't be null, so the right operand is never executed • lib/screens/service_detail/service_detail_view.dart:505:61 • dead_null_aware_expression
+   info • Unnecessary use of multiple underscores • lib/screens/service_detail/service_detail_view.dart:549:55 • unnecessary_underscores
+   info • Unnecessary use of multiple underscores • lib/screens/service_detail/service_detail_view.dart:549:59 • unnecessary_underscores
+   info • Unnecessary use of multiple underscores • lib/screens/service_detail/service_detail_view.dart:616:51 • unnecessary_underscores
+   info • Unnecessary use of multiple underscores • lib/screens/service_detail/service_detail_view.dart:616:55 • unnecessary_underscores
+   info • Unnecessary braces in a string interpolation • lib/screens/service_detail/service_detail_view.dart:894:42 • unnecessary_brace_in_string_interps
+warning • Unused import: 'package:cellphone_doctor/screens/main_screen.dart' • lib/screens/splash_screen.dart:2:8 • unused_import
+warning • Unused import: 'package:get/get.dart' • lib/screens/splash_screen.dart:5:8 • unused_import
+warning • Unused import: 'package:get/get_core/src/get_main.dart' • lib/screens/splash_screen.dart:6:8 • unused_import
+   info • Missing type annotation • lib/screens/splash_screen.dart:31:3 • strict_top_level_inference
+   info • The import of 'package:get/get_core/src/get_main.dart' is unnecessary because all of the used elements are also provided by the import of 'package:get/get.dart' • lib/screens/tracking/tracking_order_view.dart:4:8 • unnecessary_import
+   info • Constructors for public widgets should have a named 'key' parameter • lib/screens/tracking/tracking_order_view.dart:79:9 • use_key_in_widget_constructors
+   info • Unnecessary use of 'toList' in a spread • lib/screens/tracking/tracking_order_view.dart:177:50 • unnecessary_to_list_in_spreads
+   info • The variable name 'PartItem' isn't a lowerCamelCase identifier • lib/screens/tracking/tracking_order_view.dart:233:10 • non_constant_identifier_names
+   info • The variable name 'StatusStep' isn't a lowerCamelCase identifier • lib/screens/tracking/tracking_order_view.dart:257:10 • non_constant_identifier_names
+   info • The file name 'app-sizes.dart' isn't a lower_case_with_underscores identifier • lib/utils/app-sizes.dart:1:1 • file_names
+warning • Unused import: 'package:cellphone_doctor/widgets/viewstore_dialog.dart' • lib/widgets/confirm_dialog.dart:1:8 • unused_import
+warning • Unused import: '../screens/tracking/tracking_order_view.dart' • lib/widgets/confirm_dialog.dart:7:8 • unused_import
+
+335 issues found. (ran in 12.6s)
