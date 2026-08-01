@@ -3,10 +3,10 @@ import 'package:cellphone_doctor/models/app/getHomeListModel.dart';
 import 'package:cellphone_doctor/screens/service__/service_view.dart';
 import 'package:cellphone_doctor/utils/app-sizes.dart';
 import 'package:cellphone_doctor/utils/app_colors.dart';
+import 'package:cellphone_doctor/utils/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../service__/select_modal.dart';
@@ -194,17 +194,10 @@ class BrandItem extends StatelessWidget {
       ),
       child: Padding(
         padding: EdgeInsets.all(8.w),
-        child: CachedNetworkImage(
+        child: buildAppNetworkImage(
           imageUrl: imageUrl,
           fit: BoxFit.contain,
           memCacheHeight: 150,
-          placeholder: (context, url) => Skeletonizer(
-            enabled: true,
-            child: Container(color: Colors.grey.shade100),
-          ),
-          errorWidget: (context, url, error) {
-            return const Icon(Icons.broken_image_outlined, color: Colors.grey);
-          },
         ),
       ),
     );

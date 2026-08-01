@@ -16,6 +16,7 @@ import 'package:cellphone_doctor/screens/home_view__/home_widgets/ourProcessSect
 import 'package:cellphone_doctor/screens/service__/service_view.dart';
 import 'package:cellphone_doctor/utils/app-sizes.dart';
 import 'package:cellphone_doctor/utils/app_colors.dart';
+import 'package:cellphone_doctor/utils/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -979,17 +980,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                   children: [
                                     Expanded(
                                       flex: 2,
-                                      child: CachedNetworkImage(
-                                        imageUrl: item.imageUrl!,
+                                      child: buildAppNetworkImage(
+                                        imageUrl: item.imageUrl ?? '',
                                         fit: BoxFit.contain,
                                         memCacheHeight: 200,
-                                        placeholder: (context, url) => Skeletonizer(
-                                          enabled: true,
-                                          child: Container(
-                                            color: Colors.grey.shade200,
-                                          ),
-                                        ),
-                                        errorWidget: (context, url, error) => const Icon(Icons.error_outline),
                                       ),
                                     ),
                                     SizedBox(height: 8.h),

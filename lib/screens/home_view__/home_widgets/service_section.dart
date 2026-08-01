@@ -3,10 +3,10 @@ import 'package:cellphone_doctor/models/app/getHomeListModel.dart';
 import 'package:cellphone_doctor/screens/service__/service_view.dart';
 import 'package:cellphone_doctor/utils/app-sizes.dart';
 import 'package:cellphone_doctor/utils/app_colors.dart';
+import 'package:cellphone_doctor/utils/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../models/app/getHomeListModel.dart' as home;
@@ -207,16 +207,9 @@ class ServiceItem extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(4.0),
-          child: CachedNetworkImage(
+          child: buildAppNetworkImage(
             imageUrl: imageUrl,
             fit: BoxFit.contain,
-            fadeInDuration: Duration.zero,
-            fadeOutDuration: Duration.zero,
-            placeholder: (context, url) => Skeletonizer(
-              enabled: true,
-              child: Container(color: Colors.grey.shade100),
-            ),
-            errorWidget: (context, url, error) => const Icon(Icons.image_not_supported_outlined, color: Colors.grey),
           ),
         ),
       ),

@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
- import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cellphone_doctor/utils/app_network_image.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../home_controller/home_controller.dart';
 
@@ -87,27 +87,10 @@ class CarouselHome extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 4.w),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16.r),
-                        child: CachedNetworkImage(
+                        child: buildAppNetworkImage(
                           imageUrl: src,
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                           width: double.infinity,
-                          memCacheWidth: 800,
-                          memCacheHeight: 400,
-                          maxWidthDiskCache: 800,
-                          maxHeightDiskCache: 400,
-                          fadeInDuration: const Duration(milliseconds: 300),
-                          placeholder: (context, url) => Skeletonizer(
-                            enabled: true,
-                            child: Container(
-                              width: double.infinity,
-                              height: 180.h,
-                              color: Colors.grey.shade300,
-                            ),
-                          ),
-                          errorWidget: (context, url, error) => Container(
-                            color: Colors.grey.shade200,
-                            child: const Icon(Icons.error_outline, color: Colors.grey),
-                          ),
                         ),
                       ),
                     );

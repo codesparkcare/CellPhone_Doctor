@@ -8,8 +8,8 @@ class DeviceFrame extends StatelessWidget {
   const DeviceFrame({
     super.key,
     required this.child,
-    this.width = 414.0,
-    this.height = 840.0,
+    this.width = 450.0,
+    this.height = 900.0,
   });
 
   @override
@@ -208,79 +208,168 @@ class DeviceFrame extends StatelessWidget {
 
           const SizedBox(width: 24),
 
-          // Curved Callout Annotations on Right Side
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Upper Callout
-              Row(
-                children: [
-                  CustomPaint(
-                    size: const Size(24, 24),
-                    painter: _CurvedArrowPainter(isTop: true),
-                  ),
-                  const SizedBox(width: 8),
-                  const SizedBox(
-                    width: 160,
-                    child: Text(
-                      "Book your\nrepair service\ndirectly inside\nthe app!",
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF1E293B),
-                        height: 1.3,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 70),
-
-              // Lower Callout
-              Row(
-                children: [
-                  CustomPaint(
-                    size: const Size(24, 24),
-                    painter: _CurvedArrowPainter(isTop: false),
-                  ),
-                  const SizedBox(width: 8),
-                  const SizedBox(
-                    width: 160,
-                    child: Text(
-                      "Choose, Schedule\n& Track – All in\none place.",
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF1E293B),
-                        height: 1.3,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+          // Curved Callout Annotations on Right Side with smooth Red -> White -> Yellow animation
+          const _AnimatedCalloutSection(),
         ],
       ),
     );
   }
 }
 
-// Custom Painter for curved blue callout arrows
+// Stateful Widget to animate callout color continuously: Red -> White -> Yellow -> Red
+class _AnimatedCalloutSection extends StatefulWidget {
+  const _AnimatedCalloutSection();
+
+  @override
+  State<_AnimatedCalloutSection> createState() => _AnimatedCalloutSectionState();
+}
+
+class _AnimatedCalloutSectionState extends State<_AnimatedCalloutSection>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Color?> _colorAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 4),
+      vsync: this,
+    )..repeat();
+
+    _colorAnimation = TweenSequence<Color?>([
+      TweenSequenceItem(
+        tween: ColorTween(
+          begin: const Color(0xFF00E676), // Bright Emerald Green
+          end: Colors.white, // Pure White
+        ),
+        weight: 1.0,
+      ),
+      TweenSequenceItem(
+        tween: ColorTween(
+          begin: Colors.white, // Pure White
+          end: const Color(0xFFFFD600), // Vibrant Golden Yellow
+        ),
+        weight: 1.0,
+      ),
+      TweenSequenceItem(
+        tween: ColorTween(
+          begin: const Color(0xFFFFD600), // Vibrant Golden Yellow
+          end: const Color(0xFF00E676), // Bright Emerald Green
+        ),
+        weight: 1.0,
+      ),
+    ]).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _colorAnimation,
+      builder: (context, child) {
+        final currentColor = _colorAnimation.value ?? Colors.white;
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Upper Callout
+            Row(
+              children: [
+                CustomPaint(
+                  size: const Size(32, 32),
+                  painter: _CurvedArrowPainter(
+                    isTop: true,
+                    color: currentColor,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                SizedBox(
+                  width: 230,
+                  child: Text(
+                    "Book your\nrepair service\ndirectly inside\nthe app!",
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      color: currentColor,
+                      height: 1.25,
+                      shadows: const [
+                        Shadow(
+                          color: Color(0x44000000),
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 60),
+
+            // Lower Callout
+            Row(
+              children: [
+                CustomPaint(
+                  size: const Size(32, 32),
+                  painter: _CurvedArrowPainter(
+                    isTop: false,
+                    color: currentColor,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                SizedBox(
+                  width: 230,
+                  child: Text(
+                    "Choose, Schedule\n& Track – All in\none place.",
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      color: currentColor,
+                      height: 1.25,
+                      shadows: const [
+                        Shadow(
+                          color: Color(0x44000000),
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+// Custom Painter for curved animated callout arrows
 class _CurvedArrowPainter extends CustomPainter {
   final bool isTop;
-  _CurvedArrowPainter({required this.isTop});
+  final Color color;
+
+  _CurvedArrowPainter({required this.isTop, required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFF1D4ED8)
+      ..color = color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0
+      ..strokeWidth = 2.5
       ..strokeCap = StrokeCap.round;
 
     final path = Path();
@@ -297,13 +386,13 @@ class _CurvedArrowPainter extends CustomPainter {
 
       // Arrow head
       final headPaint = Paint()
-        ..color = const Color(0xFF1D4ED8)
+        ..color = color
         ..style = PaintingStyle.fill;
 
       final headPath = Path()
         ..moveTo(0, size.height)
-        ..lineTo(6, size.height - 4)
-        ..lineTo(4, size.height - 8)
+        ..lineTo(7, size.height - 5)
+        ..lineTo(5, size.height - 9)
         ..close();
       canvas.drawPath(headPath, headPaint);
     } else {
@@ -319,18 +408,19 @@ class _CurvedArrowPainter extends CustomPainter {
 
       // Arrow head
       final headPaint = Paint()
-        ..color = const Color(0xFF1D4ED8)
+        ..color = color
         ..style = PaintingStyle.fill;
 
       final headPath = Path()
         ..moveTo(0, 0)
-        ..lineTo(6, 4)
-        ..lineTo(4, 8)
+        ..lineTo(7, 5)
+        ..lineTo(5, 9)
         ..close();
       canvas.drawPath(headPath, headPaint);
     }
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _CurvedArrowPainter oldDelegate) =>
+      oldDelegate.color != color || oldDelegate.isTop != isTop;
 }
