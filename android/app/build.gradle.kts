@@ -15,7 +15,7 @@ if (keystorePropertiesFile.exists()) {
 }
 android {
     namespace = "com.cellphone.doctor.cellphone_doctor"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37
     ndkVersion = "28.2.13676358"
 
     compileOptions {

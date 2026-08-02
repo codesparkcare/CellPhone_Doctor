@@ -26,10 +26,10 @@ class _WebLandingPageState extends State<WebLandingPage> {
     'Contact Us',
   ];
 
-  void _openWhatsApp() async {
-    final Uri url = Uri.parse('https://wa.me/919876543210');
+  void _openCodeSpark() async {
+    final Uri url = Uri.parse('https://codespark.online');
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      debugPrint('Could not launch WhatsApp');
+      debugPrint('Could not launch $url');
     }
   }
 
@@ -92,55 +92,264 @@ class _WebLandingPageState extends State<WebLandingPage> {
 
           // 4. Main Scrollable Page Body Content
           SingleChildScrollView(
-            child: Center(
-              child: Container(
-                constraints: const BoxConstraints(maxWidth: 1380),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 40,
-                  vertical: 24,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Top Navigation Header Bar
-                    _buildHeader(context),
-
-                    const SizedBox(height: 36),
-
-                    // Main Hero Section (Left details + Right Device Frame)
-                    Row(
+            child: Column(
+              children: [
+                Center(
+                  child: Container(
+                    constraints: const BoxConstraints(maxWidth: 1720),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 24,
+                    ),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Left Column Details
-                        Expanded(
-                          flex: 6,
-                          child: _buildLeftHeroContent(context),
-                        ),
+                        // Top Navigation Header Bar
+                        _buildHeader(context),
 
-                        const SizedBox(width: 30),
+                        const SizedBox(height: 36),
 
-                        // Right Area: Smartphone Frame (DeviceFrame contains phone + single callout set)
-                        Expanded(
-                          flex: 5,
-                          child: Center(
-                            child: DeviceFrame(
-                              width: 450,
-                              height: 900,
-                              child: widget.child,
+                        // Main Hero Section (Left details + Right Device Frame)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Left Column Details
+                            Expanded(
+                              flex: 6,
+                              child: _buildLeftHeroContent(context),
                             ),
-                          ),
+
+                            const SizedBox(width: 30),
+
+                            // Right Area: Smartphone Frame (DeviceFrame contains phone + single callout set)
+                            Expanded(
+                              flex: 5,
+                              child: Center(
+                                child: DeviceFrame(
+                                  width: 530,
+                                  height: 1040,
+                                  child: widget.child,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
+
+                        const SizedBox(height: 40),
                       ],
                     ),
-
-                    const SizedBox(height: 40),
-                  ],
+                  ),
                 ),
-              ),
+
+                // Web Footer
+                _buildWebFooter(),
+              ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  // Web Footer Component
+  Widget _buildWebFooter() {
+    return Container(
+      width: double.infinity,
+      color: const Color(0xFF032042),
+      padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 40),
+      child: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 1720),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Top Feature Items Row
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final isNarrow = constraints.maxWidth < 900;
+                  if (isNarrow) {
+                    return Wrap(
+                      spacing: 24,
+                      runSpacing: 20,
+                      alignment: WrapAlignment.center,
+                      children: [
+                        _buildFooterFeature(
+                          icon: Icons.storefront_outlined,
+                          title: '15+',
+                          subtitle: 'Service Centres',
+                        ),
+                        _buildFooterFeature(
+                          icon: Icons.people_outline,
+                          title: '50,000+',
+                          subtitle: 'Happy Customers',
+                        ),
+                        _buildFooterFeature(
+                          icon: Icons.verified_outlined,
+                          title: 'Up to 1 Year',
+                          subtitle: 'Warranty*',
+                        ),
+                        _buildFooterFeature(
+                          icon: Icons.build_circle_outlined,
+                          title: 'Genuine &',
+                          subtitle: 'High Quality Parts',
+                        ),
+                        _buildFooterFeature(
+                          icon: Icons.lock_outline,
+                          title: 'Data Safe',
+                          subtitle: '& Secure',
+                        ),
+                        _buildFooterFeature(
+                          icon: Icons.local_shipping_outlined,
+                          title: 'Doorstep',
+                          subtitle: 'Service',
+                        ),
+                      ],
+                    );
+                  }
+
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildFooterFeature(
+                        icon: Icons.storefront_outlined,
+                        title: '15+',
+                        subtitle: 'Service Centres',
+                      ),
+                      _buildFooterDivider(),
+                      _buildFooterFeature(
+                        icon: Icons.people_outline,
+                        title: '50,000+',
+                        subtitle: 'Happy Customers',
+                      ),
+                      _buildFooterDivider(),
+                      _buildFooterFeature(
+                        icon: Icons.verified_outlined,
+                        title: 'Up to 1 Year',
+                        subtitle: 'Warranty*',
+                      ),
+                      _buildFooterDivider(),
+                      _buildFooterFeature(
+                        icon: Icons.build_circle_outlined,
+                        title: 'Genuine &',
+                        subtitle: 'High Quality Parts',
+                      ),
+                      _buildFooterDivider(),
+                      _buildFooterFeature(
+                        icon: Icons.lock_outline,
+                        title: 'Data Safe',
+                        subtitle: '& Secure',
+                      ),
+                      _buildFooterDivider(),
+                      _buildFooterFeature(
+                        icon: Icons.local_shipping_outlined,
+                        title: 'Doorstep',
+                        subtitle: 'Service',
+                      ),
+                    ],
+                  );
+                },
+              ),
+
+              const SizedBox(height: 28),
+
+              // Bottom Copyright & Branding Row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '© ${DateTime.now().year} The Cellphone Doctor. All Rights Reserved.',
+                    style: const TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFF94A3B8),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: _openCodeSpark,
+                    hoverColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    child: RichText(
+                      text: const TextSpan(
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 12,
+                          color: Color(0xFF94A3B8),
+                        ),
+                        children: [
+                          TextSpan(text: 'Design By '),
+                          TextSpan(
+                            text: 'CODESPARK',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFooterDivider() {
+    return Container(
+      height: 36,
+      width: 1,
+      color: const Color(0xFF1E3A60),
+    );
+  }
+
+  Widget _buildFooterFeature({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Icon(
+          icon,
+          color: Colors.white,
+          size: 34,
+        ),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 15,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+                height: 1.15,
+              ),
+            ),
+            const SizedBox(height: 3),
+            Text(
+              subtitle,
+              style: const TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                color: Color(0xFFCBD5E1),
+                height: 1.15,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -223,45 +432,95 @@ class _WebLandingPageState extends State<WebLandingPage> {
 
         // Navigation Links
         Row(
-          children: List.generate(_navItems.length, (index) {
-            final isSelected = _activeNavIndex == index;
-            return Padding(
-              padding: const EdgeInsets.only(left: 28.0),
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    _activeNavIndex = index;
-                  });
-                },
-                hoverColor: Colors.transparent,
-                child: Column(
+          children: [
+            ...List.generate(_navItems.length - 1, (index) {
+              final isSelected = _activeNavIndex == index;
+              return Padding(
+                padding: const EdgeInsets.only(right: 36.0),
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      _activeNavIndex = index;
+                    });
+                  },
+                  hoverColor: Colors.transparent,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        _navItems[index],
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 16,
+                          fontWeight:
+                              isSelected ? FontWeight.w700 : FontWeight.w600,
+                          color: isSelected
+                              ? const Color(0xFF2563EB)
+                              : const Color(0xFF1E293B),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Container(
+                        height: 3,
+                        width: isSelected ? 28 : 0,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2563EB),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+
+            // CTA Button for "Contact Us"
+            InkWell(
+              onTap: () {
+                setState(() {
+                  _activeNavIndex = _navItems.length - 1;
+                });
+              },
+              borderRadius: BorderRadius.circular(30),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 22,
+                  vertical: 11,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2563EB),
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF2563EB).withValues(alpha: 0.28),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: [
+                  children: const [
                     Text(
-                      _navItems[index],
+                      'Contact Us',
                       style: TextStyle(
+                        fontFamily: 'Poppins',
                         fontSize: 15,
-                        fontWeight:
-                            isSelected ? FontWeight.w700 : FontWeight.w500,
-                        color: isSelected
-                            ? const Color(0xFF2563EB)
-                            : const Color(0xFF334155),
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Container(
-                      height: 2.5,
-                      width: isSelected ? 24 : 0,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF2563EB),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
+                    SizedBox(width: 6),
+                    Icon(
+                      Icons.arrow_forward_rounded,
+                      color: Colors.white,
+                      size: 16,
                     ),
                   ],
                 ),
               ),
-            );
-          }),
+            ),
+          ],
         ),
       ],
     );
@@ -310,9 +569,9 @@ class _WebLandingPageState extends State<WebLandingPage> {
           text: const TextSpan(
             style: TextStyle(
               fontFamily: 'Poppins',
-              fontSize: 56,
+              fontSize: 64,
               fontWeight: FontWeight.w900,
-              height: 1.12,
+              height: 1.1,
               color: Color(0xFF0F172A),
             ),
             children: [
@@ -327,13 +586,13 @@ class _WebLandingPageState extends State<WebLandingPage> {
           ),
         ),
 
-        const SizedBox(height: 18),
+        const SizedBox(height: 20),
 
         // Subtitle Description
         const Text(
           'Professional repair solutions for all your smartphones, tablets and laptops with genuine parts and expert technicians.',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 18,
             fontWeight: FontWeight.w400,
             color: Color(0xFF64748B),
             height: 1.5,
@@ -451,7 +710,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
         // Bottom Platform Section with QR Codes (Matching exact reference image)
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 22),
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 26),
           decoration: BoxDecoration(
             color: const Color(0xFFF8FAFC),
             borderRadius: BorderRadius.circular(24),
@@ -470,12 +729,12 @@ class _WebLandingPageState extends State<WebLandingPage> {
                 'Experience The TCD Service on Every Platform',
                 style: TextStyle(
                   fontFamily: 'Poppins',
-                  fontSize: 16,
+                  fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF0F172A),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               FittedBox(
                 fit: BoxFit.scaleDown,
                 child: Row(
@@ -483,8 +742,8 @@ class _WebLandingPageState extends State<WebLandingPage> {
                   children: [
                     _buildPlatformBadge(
                       iconWidget: SizedBox(
-                        width: 28,
-                        height: 28,
+                        width: 32,
+                        height: 32,
                         child: CustomPaint(
                           painter: _GooglePlayStoreLogoPainter(),
                         ),
@@ -493,26 +752,26 @@ class _WebLandingPageState extends State<WebLandingPage> {
                       subPrefix: 'Get it on',
                       subBold: 'Google Play Store',
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 28),
                     _buildVerticalDivider(),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 28),
                     _buildPlatformBadge(
                       iconWidget: const Icon(
                         Icons.apple,
-                        size: 32,
+                        size: 36,
                         color: Color(0xFF0F172A),
                       ),
                       title: 'iOS App',
                       subPrefix: 'Coming Soon on',
                       subBold: 'App Store',
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 28),
                     _buildVerticalDivider(),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 28),
                     _buildPlatformBadge(
                       iconWidget: const Icon(
                         Icons.language,
-                        size: 30,
+                        size: 34,
                         color: Color(0xFF2563EB),
                       ),
                       title: 'Web Access',
@@ -522,20 +781,20 @@ class _WebLandingPageState extends State<WebLandingPage> {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
                   Icon(
                     Icons.sync_rounded,
-                    size: 17,
+                    size: 19,
                     color: Color(0xFF2563EB),
                   ),
                   SizedBox(width: 8),
                   Text(
                     'Install our app for the best experience and exclusive offers! 🤠',
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF334155),
                     ),
@@ -692,7 +951,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
             ),
           ],
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 16),
         // Realistic QR Code Box
         _buildQRCodeBox(),
       ],
@@ -701,13 +960,20 @@ class _WebLandingPageState extends State<WebLandingPage> {
 
   Widget _buildQRCodeBox() {
     return Container(
-      width: 44,
-      height: 44,
-      padding: const EdgeInsets.all(5),
+      width: 62,
+      height: 62,
+      padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.2),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.4),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0F172A).withValues(alpha: 0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: CustomPaint(
         painter: _QRCodePainter(),

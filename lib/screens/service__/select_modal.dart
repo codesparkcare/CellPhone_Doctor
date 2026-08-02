@@ -9,9 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../ApiService/ApiService.dart';
 import '../../models/app/getSelectModelResponse.dart';
-import '../Auth/login_screen.dart';
 import '../service_detail/service_detail_view.dart';
-import '../../helpers/auth_helper.dart';
 
 class SelectModelScreen extends StatefulWidget {
   final categoryid;
@@ -95,10 +93,42 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
   String _searchQuery = "";
   bool _showSearchBar = false;
   bool isGridView = true;
+
+  String _selectedSeries = "All";
+  List<String> _seriesList = ["All"];
   
   // Pagination variables
   int _currentMax = 15;
   final ScrollController _scrollController = ScrollController();
+
+  String _getSeriesForModel(Data model) {
+    if (model.series != null && model.series!.trim().isNotEmpty) {
+      String s = model.series!.trim();
+      if (!s.toLowerCase().contains("series")) {
+        s = "$s Series";
+      }
+      return s;
+    }
+    return "";
+  }
+
+  void _updateSeriesList() {
+    final Map<String, int> seriesCounts = {};
+    for (var model in _allModels) {
+      final s = _getSeriesForModel(model);
+      if (s.isNotEmpty) {
+        seriesCounts[s] = (seriesCounts[s] ?? 0) + 1;
+      }
+    }
+    
+    List<String> list = seriesCounts.keys.toList();
+    list.sort();
+    
+    _seriesList = list.isEmpty ? ["All"] : ["All", ...list];
+    if (!_seriesList.contains(_selectedSeries)) {
+      _selectedSeries = "All";
+    }
+  }
   
   void _getMoreData() {
     if (_currentMax < _filteredModels.length) {
@@ -108,8 +138,6 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
     }
   }
   void _startBackgroundPrefetching(List<Data> models) async {
-    // Intentionally disabled to completely prevent background API calls from queueing up 
-    // and slowing down user-initiated actions, like clicking on "Samsung".
     return;
   }
 
@@ -123,7 +151,6 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
         final prefs = await SharedPreferences.getInstance();
         final cachedJson = prefs.getString("models_json_$cacheKey");
         if (cachedJson != null) {
-          
           final decoded = jsonDecode(cachedJson);
           final response = GetSelectModelResponse.fromJson(decoded);
           if (response.data != null && response.data!.isNotEmpty) {
@@ -140,18 +167,10 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
     if (hasCache) {
       setState(() {
         _allModels = SelectModelScreen.modelsCache[cacheKey]!;
-        if (_searchQuery.isEmpty) {
-          _filteredModels = _allModels;
-        } else {
-          final queryForSearch = _searchQuery.replaceAll(' ', '').toLowerCase();
-          _filteredModels = _allModels.where((model) {
-            final modelName = (model.slug ?? "").replaceAll('-', '').replaceAll(' ', '').toLowerCase();
-            return modelName.contains(queryForSearch);
-          }).toList();
-        }
+        _updateSeriesList();
+        _filterModels();
         isLoading = false;
       });
-      // Removed background prefetching
     } else {
       setState(() => isLoading = true);
     }
@@ -160,10 +179,8 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
     try {
       final prefs = await SharedPreferences.getInstance();
       List<String> recentPairs = prefs.getStringList("recent_category_brand_pairs") ?? [];
-      // Remove it if it already exists to put it at the front (most recent)
       recentPairs.remove(cacheKey);
       recentPairs.insert(0, cacheKey);
-      // Keep only the top 3
       if (recentPairs.length > 3) recentPairs = recentPairs.sublist(0, 3);
       prefs.setStringList("recent_category_brand_pairs", recentPairs);
     } catch (e) {
@@ -180,9 +197,7 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
     if (!mounted) return;
 
     if (successResult != null) {
-      // Save raw JSON to SharedPreferences for next cold start
       try {
-        
         final prefs = await SharedPreferences.getInstance();
         prefs.setString("models_json_$cacheKey", jsonEncode(successResult));
       } catch (_) {}
@@ -214,7 +229,8 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
             if (cachedList[i].id != fetchedModels[i].id ||
                 cachedList[i].slug != fetchedModels[i].slug ||
                 cachedList[i].logoUrl != fetchedModels[i].logoUrl ||
-                cachedList[i].sequence != fetchedModels[i].sequence) {
+                cachedList[i].sequence != fetchedModels[i].sequence ||
+                cachedList[i].series != fetchedModels[i].series) {
               hasChanges = true;
               break;
             }
@@ -224,21 +240,13 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
 
       if (hasChanges) {
         SelectModelScreen.modelsCache[cacheKey] = fetchedModels;
-        // Removed background prefetching
       }
       
       setState(() {
         getHomeListModel = response;
         _allModels = fetchedModels;
-        if (_searchQuery.isEmpty) {
-          _filteredModels = fetchedModels;
-        } else {
-          final queryForSearch = _searchQuery.replaceAll(' ', '').toLowerCase();
-          _filteredModels = fetchedModels.where((model) {
-            final modelName = (model.slug ?? "").replaceAll('-', '').replaceAll(' ', '').toLowerCase();
-            return modelName.contains(queryForSearch);
-          }).toList();
-        }
+        _updateSeriesList();
+        _filterModels();
         isLoading = false;
       });
     } else {
@@ -248,19 +256,26 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
     }
   }
 
-  void _filterModels(String query) {
+  void _filterModels([String? query]) {
     setState(() {
-      _searchQuery = query.toLowerCase();
-      _currentMax = 15; // Reset pagination on search
-      if (_searchQuery.isEmpty) {
-        _filteredModels = _allModels;
-      } else {
-        final queryForSearch = _searchQuery.replaceAll(' ', '').toLowerCase();
-        _filteredModels = _allModels.where((model) {
-          final modelName = (model.slug ?? "").replaceAll('-', '').replaceAll(' ', '').toLowerCase();
-          return modelName.contains(queryForSearch);
-        }).toList();
+      if (query != null) {
+        _searchQuery = query.toLowerCase();
       }
+      _currentMax = 15; // Reset pagination on search / filter
+      
+      final queryForSearch = _searchQuery.replaceAll(' ', '').toLowerCase();
+      _filteredModels = _allModels.where((model) {
+        final modelName = (model.slug ?? "").replaceAll('-', '').replaceAll(' ', '').toLowerCase();
+        bool matchesSearch = queryForSearch.isEmpty || modelName.contains(queryForSearch);
+        
+        bool matchesSeries = true;
+        if (_selectedSeries != "All") {
+          final seriesName = _getSeriesForModel(model);
+          matchesSeries = (seriesName == _selectedSeries);
+        }
+        
+        return matchesSearch && matchesSeries;
+      }).toList();
     });
   }
 
@@ -295,6 +310,126 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
     super.dispose();
   }
 
+  Widget _buildSeriesSelector() {
+    if (_seriesList.length <= 1) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 12.h, bottom: 8.h),
+          child: Text(
+            "Select Series",
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 38.h,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            itemCount: _seriesList.length,
+            itemBuilder: (context, index) {
+              final series = _seriesList[index];
+              final isSelected = series == _selectedSeries;
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedSeries = series;
+                    _filterModels();
+                  });
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  margin: EdgeInsets.only(right: 10.w),
+                  padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 8.h),
+                  decoration: BoxDecoration(
+                    color: isSelected ? Colors.white : const Color(0xFFF3F4F6),
+                    borderRadius: BorderRadius.circular(20.r),
+                    border: isSelected
+                        ? Border.all(color: Colors.blue, width: 1.5)
+                        : Border.all(color: Colors.transparent, width: 1.5),
+                  ),
+                  child: Text(
+                    series,
+                    style: TextStyle(
+                      color: isSelected ? Colors.blue : Colors.black87,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                      fontSize: 13.5.sp,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        SizedBox(height: 8.h),
+      ],
+    );
+  }
+
+  Widget _buildHeaderRow() {
+    final badgeChar = _selectedSeries == "All"
+        ? "A"
+        : (_selectedSeries.isNotEmpty ? _selectedSeries[0].toUpperCase() : "M");
+    final headerTitle = _selectedSeries == "All"
+        ? "All Models"
+        : "$_selectedSeries Models";
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 24.w,
+                height: 24.h,
+                decoration: BoxDecoration(
+                  color: Colors.blue.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(4.r),
+                ),
+                child: Center(
+                  child: Text(
+                    badgeChar,
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13.sp,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 8.w),
+              Text(
+                headerTitle,
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+            ],
+          ),
+          Text(
+            "${_filteredModels.length} Models",
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.bold,
+              color: Colors.blue,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -316,18 +451,6 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
           ),
         ),
         actions: [
-          // IconButton(
-          //   icon: Icon(
-          //     isGridView ? Icons.view_list_rounded : Icons.grid_view_rounded,
-          //     color: Colors.black54,
-          //   ),
-          //   tooltip: isGridView ? "Switch to List View" : "Switch to Grid View",
-          //   onPressed: () {
-          //     setState(() {
-          //       isGridView = !isGridView;
-          //     });
-          //   },
-          // ),
           IconButton(
             icon: Icon(
               _showSearchBar ? Icons.close : Icons.search,
@@ -347,7 +470,7 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
               left: 16,
               right: 16,
               top: _showSearchBar ? 10 : 0,
-              bottom: _showSearchBar ? 20 : 0,
+              bottom: _showSearchBar ? 10 : 0,
             ),
             curve: Curves.easeInOut,
             child: _showSearchBar
@@ -405,7 +528,13 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
                   )
                 : null,
           ),
-          
+
+          // Select Series horizontal bar
+          if (!isLoading) _buildSeriesSelector(),
+
+          // All Models header row
+          if (!isLoading && _filteredModels.isNotEmpty) _buildHeaderRow(),
+
           // Models Grid
           Expanded(
             child: isLoading
@@ -416,7 +545,7 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
                       padding: const EdgeInsets.all(0),
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
-                        childAspectRatio: 0.7,
+                        childAspectRatio: 0.72,
                       ),
                       itemCount: 12,
                       itemBuilder: (context, index) => Container(
@@ -454,7 +583,7 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              _searchQuery.isNotEmpty
+                              _searchQuery.isNotEmpty || _selectedSeries != "All"
                                   ? Icons.search_off
                                   : Icons.inventory_2_outlined,
                               size: 48,
@@ -464,21 +593,27 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
                             Text(
                               _searchQuery.isNotEmpty
                                   ? "No models found for '$_searchQuery'"
-                                  : "No Models Found",
+                                  : (_selectedSeries != "All"
+                                      ? "No models in $_selectedSeries"
+                                      : "No Models Found"),
                               style: TextStyle(
                                 color: Colors.grey[600],
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            if (_searchQuery.isNotEmpty)
+                            if (_searchQuery.isNotEmpty || _selectedSeries != "All")
                               Padding(
                                 padding: const EdgeInsets.only(top: 8),
                                 child: TextButton(
                                   onPressed: () {
                                     _searchController.clear();
+                                    setState(() {
+                                      _selectedSeries = "All";
+                                      _filterModels();
+                                    });
                                   },
-                                  child: const Text("Clear Search"),
+                                  child: const Text("Reset Filters"),
                                 ),
                               ),
                           ],
@@ -493,7 +628,7 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
                             crossAxisCount: 3,
                             crossAxisSpacing: 0,
                             mainAxisSpacing: 0,
-                            childAspectRatio: 0.8,
+                            childAspectRatio: 0.75,
                           ),
                           itemCount: _filteredModels.length > _currentMax ? _currentMax : _filteredModels.length,
                           itemBuilder: (context, index) {

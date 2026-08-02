@@ -5,7 +5,7 @@ description: "The CellPhone Doctor"
 publish_to: 'none'
 
 # App version
-version: 53.0.0+53
+version: 54.0.0+54
 
 # Dart SDK version
 environment:
@@ -13,6 +13,8 @@ environment:
 
 dependencies:
   flutter:
+    sdk: flutter
+  flutter_web_plugins:
     sdk: flutter
 
   # State Management & Navigation

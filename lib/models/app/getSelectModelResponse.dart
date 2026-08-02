@@ -58,6 +58,7 @@ class Data {
       num? category, 
       num? brand, 
       String? status, 
+      String? series,
       String? createdAt, 
       String? updatedAt,}){
     _id = id;
@@ -67,6 +68,7 @@ class Data {
     _category = category;
     _brand = brand;
     _status = status;
+    _series = series;
     _createdAt = createdAt;
     _updatedAt = updatedAt;
 }
@@ -79,6 +81,7 @@ class Data {
     _category = json['category'];
     _brand = json['brand'];
     _status = json['status'];
+    _series = json['series'];
     _createdAt = json['created_at'];
     _updatedAt = json['updated_at'];
   }
@@ -89,8 +92,10 @@ class Data {
   num? _category;
   num? _brand;
   String? _status;
+  String? _series;
   String? _createdAt;
   String? _updatedAt;
+
 Data copyWith({  num? id,
   String? slug,
   String? logoUrl,
@@ -98,6 +103,7 @@ Data copyWith({  num? id,
   num? category,
   num? brand,
   String? status,
+  String? series,
   String? createdAt,
   String? updatedAt,
 }) => Data(  id: id ?? _id,
@@ -107,6 +113,7 @@ Data copyWith({  num? id,
   category: category ?? _category,
   brand: brand ?? _brand,
   status: status ?? _status,
+  series: series ?? _series,
   createdAt: createdAt ?? _createdAt,
   updatedAt: updatedAt ?? _updatedAt,
 );
@@ -117,6 +124,7 @@ Data copyWith({  num? id,
   num? get category => _category;
   num? get brand => _brand;
   String? get status => _status;
+  String? get series => _series;
   String? get createdAt => _createdAt;
   String? get updatedAt => _updatedAt;
 
@@ -129,6 +137,7 @@ Data copyWith({  num? id,
     map['category'] = _category;
     map['brand'] = _brand;
     map['status'] = _status;
+    map['series'] = _series;
     map['created_at'] = _createdAt;
     map['updated_at'] = _updatedAt;
     return map;

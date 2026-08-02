@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:workmanager/workmanager.dart';
 
 import 'screens/splash_screen.dart';
@@ -12,6 +13,7 @@ import 'helpers/background_sync.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  usePathUrlStrategy();
 
   if (!kIsWeb) {
     try {
@@ -81,7 +83,8 @@ class _MyAppState extends State<MyApp> {
           builder: (context, child) {
             return GetMaterialApp(
               debugShowCheckedModeBanner: false,
-              title: 'CellPhone Doctor',
+              title: 'The CellPhone Doctor - Best Mobile Services Shop in All Over TamilNadu',
+              initialRoute: '/',
               theme: ThemeData(
                 fontFamily: 'Poppins',
                 primarySwatch: Colors.blue,

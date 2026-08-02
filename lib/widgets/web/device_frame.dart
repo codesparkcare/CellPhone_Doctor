@@ -293,12 +293,12 @@ class _AnimatedCalloutSectionState extends State<_AnimatedCalloutSection>
                 ),
                 const SizedBox(width: 10),
                 SizedBox(
-                  width: 230,
+                  width: 250,
                   child: Text(
                     "Book your\nrepair service\ndirectly inside\nthe app!",
                     style: TextStyle(
                       fontFamily: 'Poppins',
-                      fontSize: 20,
+                      fontSize: 22,
                       fontWeight: FontWeight.w800,
                       color: currentColor,
                       height: 1.25,
@@ -315,7 +315,7 @@ class _AnimatedCalloutSectionState extends State<_AnimatedCalloutSection>
               ],
             ),
 
-            const SizedBox(height: 60),
+            const SizedBox(height: 70),
 
             // Lower Callout
             Row(
@@ -329,12 +329,12 @@ class _AnimatedCalloutSectionState extends State<_AnimatedCalloutSection>
                 ),
                 const SizedBox(width: 10),
                 SizedBox(
-                  width: 230,
+                  width: 250,
                   child: Text(
                     "Choose, Schedule\n& Track – All in\none place.",
                     style: TextStyle(
                       fontFamily: 'Poppins',
-                      fontSize: 20,
+                      fontSize: 22,
                       fontWeight: FontWeight.w800,
                       color: currentColor,
                       height: 1.25,
