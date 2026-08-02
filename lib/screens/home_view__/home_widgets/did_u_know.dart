@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cellphone_doctor/models/app/getHomeListModel.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:skeletonizer/skeletonizer.dart';
-
-import '../../../utils/app_colors.dart';
+import 'package:cellphone_doctor/utils/app_network_image.dart';
 
 class DidUKnow extends StatelessWidget {
   final List<Blog>? blogs;
@@ -43,7 +40,7 @@ class DidUKnow extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: 5,),
+        const SizedBox(height: 5),
         SizedBox(
           height: size.height * 0.20,
           child: PageView.builder(
@@ -51,21 +48,13 @@ class DidUKnow extends StatelessWidget {
             controller: PageController(viewportFraction: 0.9),
             itemBuilder: (context, index) {
               return Padding(
-                padding:  EdgeInsets.symmetric(horizontal: 6.w),
+                padding: EdgeInsets.symmetric(horizontal: 6.w),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: CachedNetworkImage(
+                  child: buildAppNetworkImage(
                     imageUrl: imageUrls[index],
-                    fit: BoxFit.fill,
-                    memCacheWidth: 1200,
-                    memCacheHeight: 600,
-                    maxWidthDiskCache: 1200,
-                    maxHeightDiskCache: 600,
-                    placeholder: (context, url) => Skeletonizer(
-                      enabled: true,
-                      child: Container(color: Colors.grey.shade200),
-                    ),
-                    errorWidget: (context, url, error) => Container(color: Colors.grey.shade100),
+                    fit: BoxFit.cover,
+                    width: double.infinity,
                   ),
                 ),
               );

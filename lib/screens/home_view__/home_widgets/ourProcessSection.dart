@@ -1,9 +1,5 @@
-import 'package:cellphone_doctor/utils/app-sizes.dart';
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import '../../../utils/app_colors.dart';
 
 class OurProcessSection extends StatelessWidget {
   const OurProcessSection({super.key});
@@ -12,16 +8,15 @@ class OurProcessSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(left: 12.w, right: 12.w, top: 2.h, bottom: 10.h),
-      padding: EdgeInsets.only(left: 12.w, right: 12.w, top: 10.h, bottom: 25.h),
-
+      padding: EdgeInsets.only(left: 12.w, right: 12.w, top: 12.h, bottom: 12.h),
       decoration: BoxDecoration(
         color: const Color(0xfff1f8fe),
         borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black12,
             blurRadius: 6,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -39,26 +34,14 @@ class OurProcessSection extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
-            height: 450.h, // Inner height updated as requested
-
-
-
-            width: double.infinity,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12.r),
-              child: Transform.scale(
-                scale: 1.1, // Added a slight zoom effect
-                child: Image.asset(
-                  "assets/images/Process/Our-Process.png",
-                  fit: BoxFit.fitWidth,
-                  width: double.infinity,
-                ),
-              ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12.r),
+            child: Image.asset(
+              "assets/images/Process/Our-Process.png",
+              fit: BoxFit.contain,
+              width: double.infinity,
             ),
           ),
-
-
         ],
       ),
     );

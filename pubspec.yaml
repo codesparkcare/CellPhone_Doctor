@@ -64,19 +64,19 @@ flutter:
 
   # Asset files
   assets:
-    - assets/images/did_u_know/
-    - assets/images/modal/
-    - assets/images/
-    - assets/images/selectService/
-    - assets/images/Brand/
-    - assets/images/why_us/
-    - assets/images/bottom/
-    - assets/course/
-    - assets/images/Process/
-    - assets/images/category/
-    - assets/images/story/
     - assets/Icon/
     - assets/cart_header/
+    - assets/course/
+    - assets/images/
+    - assets/images/Brand/
+    - assets/images/Process/
+    - assets/images/bottom/
+    - assets/images/category/
+    - assets/images/did_u_know/
+    - assets/images/modal/
+    - assets/images/selectService/
+    - assets/images/story/
+    - assets/images/why_us/
 
   # Custom fonts (optional)
   # fonts:

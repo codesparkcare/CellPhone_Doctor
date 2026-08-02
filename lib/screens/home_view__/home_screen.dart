@@ -726,7 +726,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                 color: Colors.grey.shade50,
                                 borderRadius: BorderRadius.circular(8.r),
                               ),
-                              child: CachedNetworkImage(
+                              child: buildAppNetworkImage(
                                 imageUrl: item.logoUrl ?? '',
                                 fit: BoxFit.contain,
                                 errorWidget: (c, u, e) => const Icon(Icons.phone_android),
@@ -829,16 +829,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               floating: false,
               snap: false,
               elevation: 0,
-              expandedHeight: 70.h,
-// adjust for header height
+              expandedHeight: 75.h,
               backgroundColor: Colors.transparent,
               flexibleSpace: LayoutBuilder(
                 builder: (context, constraints) {
-                  final percent =
-                  ((constraints.maxHeight - kToolbarHeight) /
-                      (90.h - kToolbarHeight))
-                      .clamp(0.0, 1.0);
-
                   return Container(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
@@ -851,73 +845,72 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       bottom: false,
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 5.w),
-                        child: Opacity(
-                          opacity: percent,
-                          child: Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                bottom: 8.h,
-                                left: 5.w,
-                                right: 5.w,
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Flexible(
-                                    child: Row(
-                                      children: [
-                                        Image.asset(
-                                          "assets/Icon/Icon.png",
-                                          height: 55.h,
-                                        ),
-                                        SizedBox(width: 8.w),
-                                        Flexible(
-                                          child: Text(
-                                            "THE CELLPHONE DOCTOR",
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16.sp,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Row(
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              bottom: 8.h,
+                              left: 5.w,
+                              right: 5.w,
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child: Row(
                                     children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            _scrollController.animateTo(
-                                              220,
-                                              duration: const Duration(milliseconds: 500),
-                                              curve: Curves.easeInOut,
-                                            );
-                                          });
-                                        },
-                                        child: Icon(
-                                          Icons.search,
-                                          color: Colors.black,
-                                          size: 26.sp,
-                                        ),
+                                      Image.asset(
+                                        "assets/Icon/Icon.png",
+                                        height: 48.h,
+                                        fit: BoxFit.contain,
                                       ),
-                                      SizedBox(width: 12.w),
-                                      GestureDetector(
-                                        onTap: () => showMicPopup(context),
-                                        child: Icon(
-                                          Icons.mic_none,
-                                          color: Colors.black,
-                                          size: 26.sp,
+                                      SizedBox(width: 8.w),
+                                      Flexible(
+                                        child: Text(
+                                          "THE CELLPHONE DOCTOR",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16.sp,
+                                            letterSpacing: 0.3,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                     ],
                                   ),
-                                ],
-                              ),
+                                ),
+                                Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _scrollController.animateTo(
+                                            220,
+                                            duration: const Duration(milliseconds: 500),
+                                            curve: Curves.easeInOut,
+                                          );
+                                        });
+                                      },
+                                      child: Icon(
+                                        Icons.search,
+                                        color: Colors.black,
+                                        size: 26.sp,
+                                      ),
+                                    ),
+                                    SizedBox(width: 12.w),
+                                    GestureDetector(
+                                      onTap: () => showMicPopup(context),
+                                      child: Icon(
+                                        Icons.mic_none,
+                                        color: Colors.black,
+                                        size: 26.sp,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -1522,7 +1515,7 @@ class _SearchHeader extends StatelessWidget {
                                       ),
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(6.r),
-                                        child: CachedNetworkImage(
+                                        child: buildAppNetworkImage(
                                           imageUrl: option.logoUrl ?? '',
                                           fit: BoxFit.contain,
                                           errorWidget: (c, u, e) => Icon(

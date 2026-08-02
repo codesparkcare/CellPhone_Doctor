@@ -12,6 +12,33 @@ class Assets {
   static const $AssetsImagesGen images = $AssetsImagesGen();
 }
 
+class $AssetsIconGen {
+  const $AssetsIconGen();
+
+  final AssetGenImage icon = const AssetGenImage('assets/Icon/Icon.png');
+}
+
+class $AssetsCartHeaderGen {
+  const $AssetsCartHeaderGen();
+
+  final AssetGenImage a001 = const AssetGenImage('assets/cart_header/001.png');
+  final AssetGenImage a002 = const AssetGenImage('assets/cart_header/002.png');
+  final AssetGenImage a003 = const AssetGenImage('assets/cart_header/003.png');
+  final AssetGenImage a004 = const AssetGenImage('assets/cart_header/004.png');
+  final AssetGenImage reffer = const AssetGenImage(
+    'assets/cart_header/reffer.png',
+  );
+}
+
+class $AssetsCourseGen {
+  const $AssetsCourseGen();
+
+  final AssetGenImage courseBanner = const AssetGenImage(
+    'assets/course/course_banner.png',
+  );
+  final AssetGenImage dot = const AssetGenImage('assets/course/dot.png');
+}
+
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
@@ -64,6 +91,114 @@ class $AssetsImagesGen {
   );
   final AssetGenImage storeImg = const AssetGenImage(
     'assets/images/store_img.png',
+  );
+}
+
+class $AssetsBrandGen {
+  const $AssetsBrandGen();
+
+  final AssetGenImage brand1 = const AssetGenImage(
+    'assets/images/Brand/brand1.png',
+  );
+  final AssetGenImage brand10 = const AssetGenImage(
+    'assets/images/Brand/brand10.png',
+  );
+  final AssetGenImage brand11 = const AssetGenImage(
+    'assets/images/Brand/brand11.png',
+  );
+  final AssetGenImage brand12 = const AssetGenImage(
+    'assets/images/Brand/brand12.png',
+  );
+  final AssetGenImage brand13 = const AssetGenImage(
+    'assets/images/Brand/brand13.png',
+  );
+  final AssetGenImage brand14 = const AssetGenImage(
+    'assets/images/Brand/brand14.png',
+  );
+  final AssetGenImage brand2 = const AssetGenImage(
+    'assets/images/Brand/brand2.png',
+  );
+  final AssetGenImage brand3 = const AssetGenImage(
+    'assets/images/Brand/brand3.png',
+  );
+  final AssetGenImage brand4 = const AssetGenImage(
+    'assets/images/Brand/brand4.png',
+  );
+  final AssetGenImage brand5 = const AssetGenImage(
+    'assets/images/Brand/brand5.png',
+  );
+  final AssetGenImage brand6 = const AssetGenImage(
+    'assets/images/Brand/brand6.png',
+  );
+  final AssetGenImage brand7 = const AssetGenImage(
+    'assets/images/Brand/brand7.png',
+  );
+  final AssetGenImage brand8 = const AssetGenImage(
+    'assets/images/Brand/brand8.png',
+  );
+  final AssetGenImage brand9 = const AssetGenImage(
+    'assets/images/Brand/brand9.png',
+  );
+}
+
+class $AssetsProcessGen {
+  const $AssetsProcessGen();
+
+  final AssetGenImage ourProcess = const AssetGenImage(
+    'assets/images/Process/Our-Process.png',
+  );
+  final AssetGenImage ourProcess1 = const AssetGenImage(
+    'assets/images/Process/Our-Process1.png',
+  );
+  final AssetGenImage process1 = const AssetGenImage(
+    'assets/images/Process/process1.png',
+  );
+  final AssetGenImage process2 = const AssetGenImage(
+    'assets/images/Process/process2.png',
+  );
+  final AssetGenImage process3 = const AssetGenImage(
+    'assets/images/Process/process3.png',
+  );
+}
+
+class $AssetsBottomGen {
+  const $AssetsBottomGen();
+
+  final AssetGenImage group = const AssetGenImage(
+    'assets/images/bottom/Group.png',
+  );
+  final AssetGenImage guidanceTools = const AssetGenImage(
+    'assets/images/bottom/guidance_tools.png',
+  );
+  final AssetGenImage hugeiconsMenuSquare = const AssetGenImage(
+    'assets/images/bottom/hugeicons_menu-square.png',
+  );
+  final AssetGenImage ionBookOutline = const AssetGenImage(
+    'assets/images/bottom/ion_book-outline.png',
+  );
+  final AssetGenImage
+  materialSymbolsLightReviewsOutlineRounded = const AssetGenImage(
+    'assets/images/bottom/material-symbols-light_reviews-outline-rounded.png',
+  );
+}
+
+class $AssetsCategoryGen {
+  const $AssetsCategoryGen();
+
+  final AssetGenImage earbuds = const AssetGenImage(
+    'assets/images/category/earbuds.png',
+  );
+  final AssetGenImage laptopRepair = const AssetGenImage(
+    'assets/images/category/laptop_repair.png',
+  );
+  final AssetGenImage mobileRepair = const AssetGenImage(
+    'assets/images/category/mobile_repair.png',
+  );
+  final AssetGenImage smartWatch = const AssetGenImage(
+    'assets/images/category/smart_watch.png',
+  );
+  final AssetGenImage tabletRepair = const AssetGenImage(
+    'assets/images/category/tablet_repair.png',
   );
 }
 
@@ -142,50 +277,14 @@ class $AssetsSelectServiceGen {
   );
 }
 
-class $AssetsBrandGen {
-  const $AssetsBrandGen();
+class $AssetsStoryGen {
+  const $AssetsStoryGen();
 
-  final AssetGenImage brand1 = const AssetGenImage(
-    'assets/images/Brand/brand1.png',
+  final AssetGenImage creatStory = const AssetGenImage(
+    'assets/images/story/creat_story.gif',
   );
-  final AssetGenImage brand10 = const AssetGenImage(
-    'assets/images/Brand/brand10.png',
-  );
-  final AssetGenImage brand11 = const AssetGenImage(
-    'assets/images/Brand/brand11.png',
-  );
-  final AssetGenImage brand12 = const AssetGenImage(
-    'assets/images/Brand/brand12.png',
-  );
-  final AssetGenImage brand13 = const AssetGenImage(
-    'assets/images/Brand/brand13.png',
-  );
-  final AssetGenImage brand14 = const AssetGenImage(
-    'assets/images/Brand/brand14.png',
-  );
-  final AssetGenImage brand2 = const AssetGenImage(
-    'assets/images/Brand/brand2.png',
-  );
-  final AssetGenImage brand3 = const AssetGenImage(
-    'assets/images/Brand/brand3.png',
-  );
-  final AssetGenImage brand4 = const AssetGenImage(
-    'assets/images/Brand/brand4.png',
-  );
-  final AssetGenImage brand5 = const AssetGenImage(
-    'assets/images/Brand/brand5.png',
-  );
-  final AssetGenImage brand6 = const AssetGenImage(
-    'assets/images/Brand/brand6.png',
-  );
-  final AssetGenImage brand7 = const AssetGenImage(
-    'assets/images/Brand/brand7.png',
-  );
-  final AssetGenImage brand8 = const AssetGenImage(
-    'assets/images/Brand/brand8.png',
-  );
-  final AssetGenImage brand9 = const AssetGenImage(
-    'assets/images/Brand/brand9.png',
+  final AssetGenImage uploadStory = const AssetGenImage(
+    'assets/images/story/upload_story.gif',
   );
 }
 
@@ -209,105 +308,6 @@ class $AssetsWhyUsGen {
   );
   final AssetGenImage warrenty = const AssetGenImage(
     'assets/images/why_us/warrenty.png',
-  );
-}
-
-class $AssetsBottomGen {
-  const $AssetsBottomGen();
-
-  final AssetGenImage group = const AssetGenImage(
-    'assets/images/bottom/Group.png',
-  );
-  final AssetGenImage guidanceTools = const AssetGenImage(
-    'assets/images/bottom/guidance_tools.png',
-  );
-  final AssetGenImage hugeiconsMenuSquare = const AssetGenImage(
-    'assets/images/bottom/hugeicons_menu-square.png',
-  );
-  final AssetGenImage ionBookOutline = const AssetGenImage(
-    'assets/images/bottom/ion_book-outline.png',
-  );
-  final AssetGenImage
-  materialSymbolsLightReviewsOutlineRounded = const AssetGenImage(
-    'assets/images/bottom/material-symbols-light_reviews-outline-rounded.png',
-  );
-}
-
-class $AssetsProcessGen {
-  const $AssetsProcessGen();
-
-  final AssetGenImage ourProcess = const AssetGenImage(
-    'assets/images/Process/Our-Process.png',
-  );
-  final AssetGenImage ourProcess1 = const AssetGenImage(
-    'assets/images/Process/Our-Process1.png',
-  );
-  final AssetGenImage process1 = const AssetGenImage(
-    'assets/images/Process/process1.png',
-  );
-  final AssetGenImage process2 = const AssetGenImage(
-    'assets/images/Process/process2.png',
-  );
-  final AssetGenImage process3 = const AssetGenImage(
-    'assets/images/Process/process3.png',
-  );
-}
-
-class $AssetsCategoryGen {
-  const $AssetsCategoryGen();
-
-  final AssetGenImage earbuds = const AssetGenImage(
-    'assets/images/category/earbuds.png',
-  );
-  final AssetGenImage laptopRepair = const AssetGenImage(
-    'assets/images/category/laptop_repair.png',
-  );
-  final AssetGenImage mobileRepair = const AssetGenImage(
-    'assets/images/category/mobile_repair.png',
-  );
-  final AssetGenImage smartWatch = const AssetGenImage(
-    'assets/images/category/smart_watch.png',
-  );
-  final AssetGenImage tabletRepair = const AssetGenImage(
-    'assets/images/category/tablet_repair.png',
-  );
-}
-
-class $AssetsStoryGen {
-  const $AssetsStoryGen();
-
-  final AssetGenImage creatStory = const AssetGenImage(
-    'assets/images/story/creat_story.gif',
-  );
-  final AssetGenImage uploadStory = const AssetGenImage(
-    'assets/images/story/upload_story.gif',
-  );
-}
-
-class $AssetsCourseGen {
-  const $AssetsCourseGen();
-
-  final AssetGenImage courseBanner = const AssetGenImage(
-    'assets/course/course_banner.png',
-  );
-  final AssetGenImage dot = const AssetGenImage('assets/course/dot.png');
-}
-
-class $AssetsIconGen {
-  const $AssetsIconGen();
-
-  final AssetGenImage icon = const AssetGenImage('assets/Icon/Icon.png');
-}
-
-class $AssetsCartHeaderGen {
-  const $AssetsCartHeaderGen();
-
-  final AssetGenImage a001 = const AssetGenImage('assets/cart_header/001.png');
-  final AssetGenImage a002 = const AssetGenImage('assets/cart_header/002.png');
-  final AssetGenImage a003 = const AssetGenImage('assets/cart_header/003.png');
-  final AssetGenImage a004 = const AssetGenImage('assets/cart_header/004.png');
-  final AssetGenImage reffer = const AssetGenImage(
-    'assets/cart_header/reffer.png',
   );
 }
 

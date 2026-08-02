@@ -12,11 +12,21 @@ class CarouselHome extends StatelessWidget {
   final bool showIndicator;
   final List<String>? imageUrls;
   final bool isLoading;
+  final double? height;
 
-  const CarouselHome({super.key, this.autoscroll = true,this.showIndicator = true, this.imageUrls, this.isLoading = false});
+  const CarouselHome({
+    super.key,
+    this.autoscroll = true,
+    this.showIndicator = true,
+    this.imageUrls,
+    this.isLoading = false,
+    this.height,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final double sliderHeight = height ?? 180.h;
+
     return GetBuilder<HomeController>(
       global: false,
       id: 'carousel',
@@ -40,7 +50,7 @@ class CarouselHome extends StatelessWidget {
           return Column(
             children: [
               SizedBox(
-                height: 180.h,
+                height: sliderHeight,
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 4.w),
                   child: ClipRRect(
@@ -75,7 +85,7 @@ class CarouselHome extends StatelessWidget {
         return Column(
           children: [
             SizedBox(
-              height: 180.h,
+              height: sliderHeight,
               child: PageView.builder(
                 controller: controller.pageController,
                 itemCount: controller.images.length,
@@ -89,7 +99,7 @@ class CarouselHome extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16.r),
                         child: buildAppNetworkImage(
                           imageUrl: src,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                           width: double.infinity,
                         ),
                       ),
@@ -118,7 +128,7 @@ class CarouselHome extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: isActive
                               ? Colors.grey
-                              : Colors.grey.withOpacity(0.4),
+                              : Colors.grey.withValues(alpha: 0.4),
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                       );

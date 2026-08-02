@@ -15,8 +15,19 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   usePathUrlStrategy();
 
-  if (!kIsWeb) {
-    try {
+  try {
+    if (kIsWeb) {
+      await Firebase.initializeApp(
+        options: const FirebaseOptions(
+          apiKey: "AIzaSyBQQSGErCmPckWbo-_IUTJfEMxDFQKS5hk",
+          appId: "1:159217464337:web:9f27e8d4af5ec6bdec6db0",
+          messagingSenderId: "159217464337",
+          projectId: "the-cellphone-doctor",
+          authDomain: "the-cellphone-doctor.firebaseapp.com",
+          storageBucket: "the-cellphone-doctor.firebasestorage.app",
+        ),
+      );
+    } else {
       await Firebase.initializeApp();
 
       // Initialize background sync worker
@@ -39,9 +50,9 @@ void main() async {
       await SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
       ]);
-    } catch (e) {
-      debugPrint("Mobile initialization error: $e");
     }
+  } catch (e) {
+    debugPrint("Firebase initialization error: $e");
   }
 
   runApp(const MyApp());

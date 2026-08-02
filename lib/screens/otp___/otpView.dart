@@ -1,18 +1,26 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 import '../ProfileView/create_profile.dart';
 import '../main_screen.dart';
 import '../service_detail/service_detail_view.dart';
 import 'OtpController/otp_controller.dart';
+
 class OtpView extends StatefulWidget {
-  String number;
-  String id;
-  OtpView({super.key,required this.number,required this.id});
+  final String number;
+  final String id;
+  final ConfirmationResult? confirmationResult;
+
+  const OtpView({
+    super.key,
+    required this.number,
+    required this.id,
+    this.confirmationResult,
+  });
 
   @override
   State<OtpView> createState() => _OtpViewState();
@@ -54,7 +62,7 @@ class _OtpViewState extends State<OtpView> {
       controller.phoneNumber = widget.number;
       controller.otp = otpCode.trim();
 
-      if (FirebaseAuth.instance.currentUser == null) {
+      if (!kIsWeb && verificationId != "web_otp" && FirebaseAuth.instance.currentUser == null) {
         PhoneAuthCredential credential = PhoneAuthProvider.credential(
           verificationId: verificationId,
           smsCode: otpCode.trim(),
@@ -67,7 +75,7 @@ class _OtpViewState extends State<OtpView> {
     } catch (e) {
       print("❌ OTP VERIFY ERROR: $e");
       if (mounted && FirebaseAuth.instance.currentUser == null) {
-        Get.snackbar("Failed", "Incorrect OTP");
+        Get.snackbar("Failed", "Incorrect OTP: $e");
       }
     } finally {
       if (mounted) {
@@ -116,72 +124,89 @@ class _OtpViewState extends State<OtpView> {
             ),
             const SizedBox(height: 25),
 
-            // OTP Display Boxes
-            GetBuilder<OtpController>(
-              builder: (controller) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(6, (index) {
-                        return Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 6),
-                      height: 50,
-                      width: 45,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF5F6FA),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.4),
-                            blurRadius: 0,
-                            spreadRadius: 1,
-                            offset: const Offset(0, 2),
+            // Interactive OTP Input Section (Stacking Boxes + Transparent TextField)
+            GestureDetector(
+              onTap: () {
+                _otpFocusNode.requestFocus();
+              },
+              child: SizedBox(
+                height: 60,
+                width: 330,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Full-size Transparent TextField to capture Web Keyboard Focus
+                    Positioned.fill(
+                      child: Opacity(
+                        opacity: 0.01,
+                        child: TextField(
+                          controller: _otpController,
+                          focusNode: _otpFocusNode,
+                          keyboardType: TextInputType.number,
+                          maxLength: 6,
+                          autofocus: true,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
+                          decoration: const InputDecoration(
+                            counterText: '',
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
                           ),
-                        ],
-                      ),
-                      child: Text(
-                        index < _otpController.text.length
-                            ? _otpController.text[index]
-                            : "",
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                          onChanged: (value) {
+                            setState(() {}); // Refresh UI boxes
+                            if (value.length == 6) {
+                              _handleOtpSubmit(value);
+                            }
+                          },
                         ),
                       ),
-                    );
-                  }),
-                );
-              },
-            ),
+                    ),
 
-            const SizedBox(height: 25),
-
-            // Hidden OTP Input Field
-            SizedBox(
-              height: 1,
-              child: TextField(
-                controller: _otpController,
-                focusNode: _otpFocusNode,
-                keyboardType: TextInputType.number,
-                maxLength: 6,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                ],
-                style: const TextStyle(fontSize: 1, color: Colors.transparent),
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  counterText: '',
-                  contentPadding: EdgeInsets.zero,
+                    // Visible OTP Display Boxes
+                    IgnorePointer(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(6, (index) {
+                          final bool isFocused = _otpFocusNode.hasFocus &&
+                              (_otpController.text.length == index ||
+                                  (_otpController.text.length == 6 && index == 5));
+                          return Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            height: 50,
+                            width: 44,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF5F6FA),
+                              borderRadius: BorderRadius.circular(12),
+                              border: isFocused
+                                  ? Border.all(color: Colors.blue, width: 2)
+                                  : Border.all(color: Colors.transparent, width: 1),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withValues(alpha: 0.2),
+                                  blurRadius: 2,
+                                  spreadRadius: 1,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Text(
+                              index < _otpController.text.length
+                                  ? _otpController.text[index]
+                                  : "",
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                  ],
                 ),
-                onChanged: (value) {
-                  setState(() {}); // Update UI for OTP boxes
-                  
-                  // Auto-submit when 6 digits are entered
-                  if (value.length == 6) {
-                    _handleOtpSubmit(value);
-                  }
-                },
               ),
             ),
 

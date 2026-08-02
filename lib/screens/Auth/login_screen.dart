@@ -1,5 +1,6 @@
 import 'package:cellphone_doctor/screens/Auth/controller/auth_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -108,6 +109,20 @@ class _LoginScreenState extends State<LoginScreen> {
     String formattedPhone =
     phone.startsWith('+') ? phone : "+91$phone";
     print("formattedPhone$formattedPhone");
+    
+    if (kIsWeb) {
+      if (mounted) {
+        setState(() {
+          loading = false;
+        });
+      }
+      Get.to(() => OtpView(
+            number: phone,
+            id: "web_otp",
+          ));
+      return;
+    }
+
     try {
       await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: formattedPhone,

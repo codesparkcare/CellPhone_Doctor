@@ -24,19 +24,16 @@ Widget buildAppNetworkImage({
   final String cleanUrl = Uri.encodeFull(trimmed);
 
   if (kIsWeb) {
-    final String stripped = cleanUrl.replaceFirst(RegExp(r'^https?://'), '');
-    final String webProxyUrl = trimmed.startsWith('http')
-        ? 'https://wsrv.nl/?url=$stripped&output=webp'
-        : cleanUrl;
-
     return Image.network(
-      webProxyUrl,
+      cleanUrl,
       fit: fit,
       width: width,
       height: height,
       errorBuilder: (context, error, stackTrace) {
+        final String stripped = cleanUrl.replaceFirst(RegExp(r'^https?://'), '');
+        final String webProxyUrl = 'https://wsrv.nl/?url=$stripped&output=webp';
         return Image.network(
-          cleanUrl,
+          webProxyUrl,
           fit: fit,
           width: width,
           height: height,
@@ -51,7 +48,7 @@ Widget buildAppNetworkImage({
       loadingBuilder: (context, child, loadingProgress) {
         if (loadingProgress == null) return child;
         if (placeholder != null) {
-          return placeholder(context, webProxyUrl);
+          return placeholder(context, cleanUrl);
         }
         return Skeletonizer(
           enabled: true,

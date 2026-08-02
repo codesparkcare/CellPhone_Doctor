@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../../../ApiService/ApiService.dart';
 import '../../../helpers/auth_helper.dart';
@@ -50,6 +51,25 @@ class OtpController extends GetxController {
 
     String formattedPhone =
         phoneNumber.startsWith('+') ? phoneNumber : "+91$phoneNumber";
+
+    if (kIsWeb) {
+      Get.snackbar("Success", "OTP sent successfully");
+      onVerificationIdReceived("web_otp");
+
+      resendTimer = 60;
+      _timer?.cancel();
+      _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        resendTimer--;
+        update();
+        if (resendTimer <= 0) {
+          timer.cancel();
+        }
+      });
+
+      isResending = false;
+      update();
+      return;
+    }
 
     try {
       await FirebaseAuth.instance.verifyPhoneNumber(
