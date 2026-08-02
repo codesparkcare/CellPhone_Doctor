@@ -1,0 +1,8 @@
+storePassword=flyweb
+keyPassword=flyweb
+keyAlias=key
+storeFile=../../key/key.jks
+
+
+
+
