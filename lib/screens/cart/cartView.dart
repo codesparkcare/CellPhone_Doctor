@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cellphone_doctor/screens/AddressScreen/address_view.dart';
 import 'package:cellphone_doctor/utils/app_colors.dart';
+import 'package:cellphone_doctor/utils/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
@@ -824,10 +825,10 @@ class _CartScreenState extends State<CartScreen> {
                                   Container(
                                     height: 155.h,
                                     width: 115.w,
-                                    child: Image.network(
-                                      image,
+                                    child: buildAppNetworkImage(
+                                      imageUrl: image,
                                       fit: BoxFit.contain,
-                                      errorBuilder: (_, __, ___) => Image.asset(
+                                      errorWidget: (_, __, ___) => Image.asset(
                                         "assets/images/selectService/display option.png",
                                       ),
                                     ),
@@ -1012,14 +1013,13 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8.r),
-                                child: product.spare!.image != null
-                                    ? Image.network(
-                                  product.spare!.image!,
+                                child: buildAppNetworkImage(
+                                  imageUrl: product.spare?.image ?? '',
                                   fit: BoxFit.contain,
-                                )
-                                    : Image.asset(
-                                  "assets/images/selectService/display.png",
-                                  fit: BoxFit.contain,
+                                  errorWidget: (_, __, ___) => Image.asset(
+                                    "assets/images/selectService/display.png",
+                                    fit: BoxFit.contain,
+                                  ),
                                 ),
                               ),
                             ),

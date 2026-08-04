@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cellphone_doctor/utils/app_network_image.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../ApiService/ApiService.dart';
@@ -635,12 +635,15 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
                             final model = _filteredModels[index];
                             final displayName = (model.slug ?? "").replaceAll('-', ' ');
                             return GestureDetector(
-                              onTap: () => Get.to(() => ServiceDetailScreen(
-                                brandId: model.brand,
-                                catergoryId: model.category,
-                                modelId: model.id,
-                                spareID: widget.spareID,
-                              )),
+                              onTap: () => Get.to(
+                                () => ServiceDetailScreen(
+                                  brandId: model.brand,
+                                  catergoryId: model.category,
+                                  modelId: model.id,
+                                  spareID: widget.spareID,
+                                ),
+                                routeName: '/service-detail',
+                              ),
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: Colors.white,
@@ -655,28 +658,19 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
                                       flex: 3,
                                       child: Padding(
                                         padding: EdgeInsets.all(8.w),
-                                        child: (model.logoUrl == null || model.logoUrl!.trim().isEmpty || model.logoUrl == "null")
-                                            ? const Center(
-                                                child: Icon(Icons.image_not_supported_outlined, color: Colors.grey, size: 40),
-                                              )
-                                            : CachedNetworkImage(
-                                                imageUrl: model.logoUrl!,
-                                                fit: BoxFit.contain,
-                                                memCacheWidth: 250,
-                                                memCacheHeight: 250,
-                                                maxWidthDiskCache: 250,
-                                                maxHeightDiskCache: 250,
-                                                filterQuality: FilterQuality.high,
-                                                fadeInDuration: const Duration(milliseconds: 100),
-                                                placeholder: (context, url) => Skeletonizer(
-                                                  enabled: true,
-                                                  child: Container(color: Colors.grey.shade100),
-                                                ),
-                                                errorWidget: (context, url, error) =>
-                                                    const Center(
-                                                      child: Icon(Icons.image_not_supported_outlined, color: Colors.grey, size: 40),
-                                                    ),
-                                              ),
+                                        child: buildAppNetworkImage(
+                                          imageUrl: model.logoUrl ?? '',
+                                          fit: BoxFit.contain,
+                                          memCacheWidth: 250,
+                                          memCacheHeight: 250,
+                                          placeholder: (context, url) => Skeletonizer(
+                                            enabled: true,
+                                            child: Container(color: Colors.grey.shade100),
+                                          ),
+                                          errorWidget: (context, url, error) => const Center(
+                                            child: Icon(Icons.image_not_supported_outlined, color: Colors.grey, size: 40),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                     Expanded(
@@ -725,28 +719,19 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(8.r),
                                 ),
-                                child: (model.logoUrl == null || model.logoUrl!.trim().isEmpty || model.logoUrl == "null")
-                                    ? const Center(
-                                        child: Icon(Icons.image_not_supported_outlined, color: Colors.grey, size: 30),
-                                      )
-                                    : CachedNetworkImage(
-                                        imageUrl: model.logoUrl!,
-                                        fit: BoxFit.contain,
-                                        memCacheWidth: 250,
-                                        memCacheHeight: 250,
-                                        maxWidthDiskCache: 250,
-                                        maxHeightDiskCache: 250,
-                                        filterQuality: FilterQuality.high,
-                                        fadeInDuration: const Duration(milliseconds: 100),
-                                        placeholder: (context, url) => Skeletonizer(
-                                          enabled: true,
-                                          child: Container(color: Colors.grey.shade100),
-                                        ),
-                                        errorWidget: (context, url, error) =>
-                                            const Center(
-                                              child: Icon(Icons.image_not_supported_outlined, color: Colors.grey, size: 30),
-                                            ),
-                                      ),
+                                child: buildAppNetworkImage(
+                                  imageUrl: model.logoUrl ?? '',
+                                  fit: BoxFit.contain,
+                                  memCacheWidth: 250,
+                                  memCacheHeight: 250,
+                                  placeholder: (context, url) => Skeletonizer(
+                                    enabled: true,
+                                    child: Container(color: Colors.grey.shade100),
+                                  ),
+                                  errorWidget: (context, url, error) => const Center(
+                                    child: Icon(Icons.image_not_supported_outlined, color: Colors.grey, size: 30),
+                                  ),
+                                ),
                               ),
                               title: Text(
                                 displayName,
@@ -761,12 +746,15 @@ class _SelectModelScreenState extends State<SelectModelScreen> {
                                 size: 16.sp,
                                 color: Colors.grey,
                               ),
-                              onTap: () => Get.to(() => ServiceDetailScreen(
-                                brandId: model.brand,
-                                catergoryId: model.category,
-                                modelId: model.id,
-                                spareID: widget.spareID,
-                              )),
+                              onTap: () => Get.to(
+                                () => ServiceDetailScreen(
+                                  brandId: model.brand,
+                                  catergoryId: model.category,
+                                  modelId: model.id,
+                                  spareID: widget.spareID,
+                                ),
+                                routeName: '/service-detail',
+                              ),
                             );
                           },
                         ),

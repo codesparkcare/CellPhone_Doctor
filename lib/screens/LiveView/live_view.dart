@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
 import 'package:cellphone_doctor/controller/navBar_controller.dart';
+import 'package:cellphone_doctor/utils/app_network_image.dart';
 import 'controller/live_controller.dart';
 
 class LiveView extends StatelessWidget {
@@ -485,13 +486,13 @@ class LiveView extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(16.r),
                                       child: Stack(
                                         children: [
-                                          (banner.url != null && banner.url!.startsWith("http"))
-                                              ? Image.network(
-                                                  banner.url!,
+                                          (banner.url != null && banner.url!.trim().isNotEmpty)
+                                              ? buildAppNetworkImage(
+                                                  imageUrl: banner.url!,
                                                   width: size.width * 0.85,
                                                   height: double.infinity,
                                                   fit: BoxFit.cover,
-                                                  errorBuilder: (context, error, stackTrace) => itemPlaceholder(size),
+                                                  errorWidget: (context, error, stackTrace) => itemPlaceholder(size),
                                                 )
                                               : itemPlaceholder(size),
                                           Container(

@@ -10,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:video_player/video_player.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cellphone_doctor/utils/app_network_image.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:cellphone_doctor/helpers/auth_helper.dart';
 import 'package:cellphone_doctor/screens/home_view__/home_widgets/StorySection/story_controller.dart';
@@ -514,7 +514,7 @@ class _StoryCardState extends State<StoryCard> with AutomaticKeepAliveClientMixi
                               ),
                       ],
                     )
-                  : CachedNetworkImage(
+                  : buildAppNetworkImage(
                       imageUrl: _fullImageUrl,
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Container(

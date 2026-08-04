@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cellphone_doctor/utils/app_network_image.dart';
 import '../../ApiService/ApiService.dart';
 import '../../helpers/auth_helper.dart';
 import '../../models/app/GetCartListResponseModel.dart' show GetCartListResponseModel;
@@ -788,19 +788,9 @@ class _SelectScreenState extends State<ServiceDetailScreen> {
                                 SizedBox(
                                   height: 60.h,
                                   width: 60.w,
-                                  child: CachedNetworkImage(
+                                  child: buildAppNetworkImage(
                                     imageUrl: imagePath,
                                     fit: BoxFit.contain,
-                                    placeholder: (context, url) => Center(
-                                      child: SizedBox(
-                                        width: 20.w,
-                                        height: 20.h,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2.w,
-                                          valueColor: AlwaysStoppedAnimation<Color>(Colors.blue.shade700),
-                                        ),
-                                      ),
-                                    ),
                                     errorWidget: (_, __, ___) => Image.asset(
                                       "assets/images/selectService/display.png",
                                       fit: BoxFit.contain,
@@ -875,10 +865,10 @@ class _SelectScreenState extends State<ServiceDetailScreen> {
                             ),
                             child: Padding(
                               padding: EdgeInsets.all(2.w),
-                              child: Image.network(
-                                image,
+                              child: buildAppNetworkImage(
+                                imageUrl: image,
                                 fit: BoxFit.contain,
-                                errorBuilder: (_, __, ___) => Image.asset(
+                                errorWidget: (_, __, ___) => Image.asset(
                                   "assets/images/selectService/display option.png",
                                 ),
                               ),
@@ -1362,25 +1352,11 @@ class ServiceOptionCard extends StatelessWidget {
                         ),
                         child: Padding(
                           padding: EdgeInsets.all(2.w),
-                          child: CachedNetworkImage(
+                          child: buildAppNetworkImage(
                             imageUrl: imagePath,
                             fit: BoxFit.contain,
                             memCacheWidth: 250,
                             memCacheHeight: 250,
-                            maxWidthDiskCache: 250,
-                            maxHeightDiskCache: 250,
-                            filterQuality: FilterQuality.high,
-                            fadeInDuration: const Duration(milliseconds: 100),
-                            placeholder: (context, url) => Center(
-                              child: SizedBox(
-                                width: 16.w,
-                                height: 16.h,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 1.5,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue.shade300),
-                                ),
-                              ),
-                            ),
                             errorWidget: (context, url, error) =>
                                 Icon(Icons.image_not_supported, size: 20.sp, color: Colors.grey),
                           ),

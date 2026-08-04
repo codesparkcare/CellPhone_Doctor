@@ -184,22 +184,27 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         .toList();
 
     // Schedule after 300ms delay to let the page mount and transition smoothly
+    if (kIsWeb) return;
     Future.delayed(const Duration(milliseconds: 300), () {
       if (!mounted) return;
-      for (final url in bannerUrls) {
-        precacheImage(CachedNetworkImageProvider(url), ctx);
-      }
-      for (final url in categoryUrls) {
-        precacheImage(
-          CachedNetworkImageProvider(url),
-          ctx,
-        );
-      }
-      for (final url in spareUrls) {
-        precacheImage(
-          CachedNetworkImageProvider(url),
-          ctx,
-        );
+      try {
+        for (final url in bannerUrls) {
+          precacheImage(CachedNetworkImageProvider(url), ctx);
+        }
+        for (final url in categoryUrls) {
+          precacheImage(
+            CachedNetworkImageProvider(url),
+            ctx,
+          );
+        }
+        for (final url in spareUrls) {
+          precacheImage(
+            CachedNetworkImageProvider(url),
+            ctx,
+          );
+        }
+      } catch (e) {
+        debugPrint("Home precache error: $e");
       }
     });
   }
@@ -482,11 +487,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       // SMART NAVIGATION: If exactly one match, jump straight to it
       if (results.length == 1) {
         final selection = results.first;
-        Get.to(() => ServiceDetailScreen(
-              brandId: selection.brand,
-              catergoryId: selection.category,
-              modelId: selection.id,
-            ));
+        Get.to(
+          () => ServiceDetailScreen(
+            brandId: selection.brand,
+            catergoryId: selection.category,
+            modelId: selection.id,
+          ),
+          routeName: '/service-detail',
+        );
       }
     } catch (e) {
       debugPrint("Search Error: $e");
@@ -739,11 +747,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             trailing: Icon(Icons.chevron_right, size: 18.sp, color: Colors.grey.shade400),
                             onTap: () {
                               Navigator.pop(context);
-                              Get.to(() => ServiceDetailScreen(
-                                    brandId: item.brand,
-                                    catergoryId: item.category,
-                                    modelId: item.id,
-                                  ));
+                              Get.to(
+                                () => ServiceDetailScreen(
+                                  brandId: item.brand,
+                                  catergoryId: item.category,
+                                  modelId: item.id,
+                                ),
+                                routeName: '/service-detail',
+                              );
                             },
                           );
                         },
@@ -956,11 +967,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             final item = categories[index];
                             return GestureDetector(
                               onTap: () {
-                                Get.to(() => ServiceView(
-                                      categoryList:
-                                          getHomeListModel!.categories!,
-                                      initialIndex: index,
-                                    ));
+                                 Get.to(
+                                   () => ServiceView(
+                                     categoryList: getHomeListModel!.categories!,
+                                     initialIndex: index,
+                                   ),
+                                   routeName: '/service',
+                                 );
                               },
                               child: Container(
                                 width: size.width * 0.20,
@@ -1239,7 +1252,7 @@ Widget _buildCategoryBar() {
       itemBuilder: (context, index) {
         final item = categories[index];
         return GestureDetector(
-          onTap: () => Get.to(() => const ServiceView()),
+          onTap: () => Get.to(() => const ServiceView(), routeName: '/service'),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -1375,11 +1388,14 @@ class _SearchHeader extends StatelessWidget {
         },
         displayStringForOption: (Data option) => (option.slug ?? '').replaceAll('-', ' '),
         onSelected: (Data selection) {
-          Get.to(() => ServiceDetailScreen(
-                brandId: selection.brand,
-                catergoryId: selection.category,
-                modelId: selection.id,
-              ));
+          Get.to(
+            () => ServiceDetailScreen(
+              brandId: selection.brand,
+              catergoryId: selection.category,
+              modelId: selection.id,
+            ),
+            routeName: '/service-detail',
+          );
         },
         fieldViewBuilder: (BuildContext context, TextEditingController textEditingController,
             FocusNode focusNodeInternal, VoidCallback onFieldSubmitted) {

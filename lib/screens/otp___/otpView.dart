@@ -62,7 +62,7 @@ class _OtpViewState extends State<OtpView> {
       controller.phoneNumber = widget.number;
       controller.otp = otpCode.trim();
 
-      if (!kIsWeb && verificationId != "web_otp" && FirebaseAuth.instance.currentUser == null) {
+      if (verificationId != "web_otp" && FirebaseAuth.instance.currentUser == null) {
         PhoneAuthCredential credential = PhoneAuthProvider.credential(
           verificationId: verificationId,
           smsCode: otpCode.trim(),

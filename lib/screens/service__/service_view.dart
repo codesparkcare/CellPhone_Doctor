@@ -7,7 +7,7 @@ import 'package:cellphone_doctor/screens/service__/select_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cellphone_doctor/utils/app_network_image.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -288,11 +288,14 @@ class _ServiceViewState extends State<ServiceView> {
                           final item = brands[index];
                           return InkWell(
                             onTap: () {
-                              Get.to(() => SelectModelScreen(
-                                    categoryid: brands[index].category,
-                                    brandId: brands[index].id,
-                                    spareID: widget.spareID,
-                                  ));
+                              Get.to(
+                                () => SelectModelScreen(
+                                  categoryid: brands[index].category,
+                                  brandId: brands[index].id,
+                                  spareID: widget.spareID,
+                                ),
+                                routeName: '/select-model',
+                              );
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -309,20 +312,15 @@ class _ServiceViewState extends State<ServiceView> {
                               ),
                               child: Padding(
                                 padding: EdgeInsets.all(8.w),
-                                child: CachedNetworkImage(
+                                child: buildAppNetworkImage(
                                   imageUrl: item.logoUrl ?? '',
                                   fit: BoxFit.contain,
                                   memCacheWidth: 250,
                                   memCacheHeight: 250,
-                                  maxWidthDiskCache: 250,
-                                  maxHeightDiskCache: 250,
-                                  filterQuality: FilterQuality.high,
-                                  fadeInDuration: const Duration(milliseconds: 100),
                                   placeholder: (context, url) => Skeletonizer(
                                     enabled: true,
                                     child: Container(color: Colors.grey.shade100),
                                   ),
-                                  errorWidget: (context, url, error) => const SizedBox.shrink(),
                                 ),
                               ),
                             ),

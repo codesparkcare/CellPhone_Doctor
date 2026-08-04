@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:cellphone_doctor/ApiService/ApiService.dart';
 
 Widget buildAppNetworkImage({
   required String imageUrl,
@@ -13,12 +14,30 @@ Widget buildAppNetworkImage({
   Widget Function(BuildContext, String)? placeholder,
   Widget Function(BuildContext, String, dynamic)? errorWidget,
 }) {
-  final String trimmed = imageUrl.trim();
-  if (trimmed.isEmpty) {
+  String trimmed = imageUrl.trim();
+  if (trimmed.isEmpty || trimmed == "null") {
     if (errorWidget != null) {
       return Builder(builder: (ctx) => errorWidget(ctx, '', 'empty'));
     }
     return _defaultFallback();
+  }
+
+  // Prepend base URL if relative path
+  if (!trimmed.startsWith('http://') &&
+      !trimmed.startsWith('https://') &&
+      !trimmed.startsWith('data:') &&
+      !trimmed.startsWith('blob:')) {
+    final baseUrl = ApiService.baseUrl.replaceAll('/api', '');
+    if (trimmed.startsWith('/')) {
+      trimmed = '$baseUrl$trimmed';
+    } else {
+      trimmed = '$baseUrl/$trimmed';
+    }
+  }
+
+  // Upgrade http to https on web to avoid Mixed Content policy blocking
+  if (kIsWeb && trimmed.startsWith('http://')) {
+    trimmed = trimmed.replaceFirst('http://', 'https://');
   }
 
   final String cleanUrl = Uri.encodeFull(trimmed);
@@ -85,7 +104,7 @@ Widget _defaultFallback() {
       borderRadius: BorderRadius.circular(8),
     ),
     child: const Icon(
-      Icons.build_circle_rounded,
+      Icons.image_not_supported_outlined,
       color: Color(0xFF2563EB),
       size: 24,
     ),

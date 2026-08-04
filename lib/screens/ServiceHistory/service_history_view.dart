@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:cellphone_doctor/utils/app_network_image.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -771,10 +772,10 @@ class CompactServiceCard extends StatelessWidget {
                   child: order?.productImage != null &&
                          order?.productImage != "0" &&
                          order!.productImage!.isNotEmpty
-                      ? Image.network(
-                          order!.productImage!,
+                      ? buildAppNetworkImage(
+                          imageUrl: order!.productImage!,
                           fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
+                          errorWidget: (context, error, stackTrace) {
                             return Image.asset(
                               "assets/images/modal/modal16.png",
                               fit: BoxFit.contain,
@@ -867,10 +868,10 @@ class CompactServiceCard extends StatelessWidget {
                         color: Colors.white,
                       ),
                       child: item.image != null && item.image!.isNotEmpty
-                          ? Image.network(
-                              item.image!,
+                          ? buildAppNetworkImage(
+                              imageUrl: item.image!,
                               fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) {
+                              errorWidget: (context, error, stackTrace) {
                                 return Image.asset(
                                   "assets/images/category/mobile_repair.png",
                                   fit: BoxFit.contain,
@@ -1190,10 +1191,10 @@ class PickUpServiceCard extends StatelessWidget {
                   child: order.productImage != null &&
                          order.productImage != "0" &&
                          order.productImage!.isNotEmpty
-                      ? Image.network(
-                          order.productImage!,
+                      ? buildAppNetworkImage(
+                          imageUrl: order.productImage!,
                           fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
+                          errorWidget: (context, error, stackTrace) {
                             return Image.asset(
                               "assets/images/modal/modal16.png",
                               fit: BoxFit.contain,
@@ -1286,10 +1287,10 @@ class PickUpServiceCard extends StatelessWidget {
                         color: Colors.white,
                       ),
                       child: item.image != null && item.image!.isNotEmpty
-                          ? Image.network(
-                              item.image!,
+                          ? buildAppNetworkImage(
+                              imageUrl: item.image!,
                               fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) {
+                              errorWidget: (context, error, stackTrace) {
                                 return Image.asset(
                                   "assets/images/category/mobile_repair.png",
                                   fit: BoxFit.contain,

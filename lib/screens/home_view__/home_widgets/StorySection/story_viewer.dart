@@ -8,7 +8,7 @@ import 'package:chewie/chewie.dart';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 import 'package:video_thumbnail/video_thumbnail.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cellphone_doctor/utils/app_network_image.dart';
 import 'package:cellphone_doctor/screens/home_view__/home_widgets/StorySection/story_controller.dart';
 import 'package:cellphone_doctor/models/app/getStoryListReponseModel.dart';
 import 'package:cellphone_doctor/ApiService/ApiService.dart';
@@ -301,8 +301,7 @@ class _StoryItemViewState extends State<StoryItemView>
                       ? Chewie(key: const ValueKey('video'), controller: _chewieController!) 
                       : const SizedBox())
                   : const Center(child: CircularProgressIndicator()))
-              : CachedNetworkImage(
-                  key: const ValueKey('image'),
+              : buildAppNetworkImage(
                   imageUrl: _fullUrl,
                   fit: BoxFit.cover,
                   placeholder: (context, url) =>

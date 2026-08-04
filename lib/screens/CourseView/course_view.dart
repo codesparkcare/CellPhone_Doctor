@@ -9,6 +9,7 @@ import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../utils/app_colors.dart';
+import 'package:cellphone_doctor/utils/app_network_image.dart';
 import '../../widgets/course_confirm.dart';
 
 class CourseView extends StatelessWidget {
@@ -256,12 +257,12 @@ class CourseView extends StatelessWidget {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(8.r),
                                     child: course.image != null && course.image!.isNotEmpty
-                                        ? Image.network(
-                                            course.image!,
+                                        ? buildAppNetworkImage(
+                                            imageUrl: course.image!,
                                             height: 100.h,
                                             width: 120.w,
                                             fit: BoxFit.cover,
-                                            errorBuilder: (context, error, stackTrace) => Image.asset(
+                                            errorWidget: (context, error, stackTrace) => Image.asset(
                                               "assets/course/course_banner.png",
                                               height: 100.h,
                                               width: 120.w,

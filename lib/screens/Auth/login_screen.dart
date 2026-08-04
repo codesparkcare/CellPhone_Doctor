@@ -77,23 +77,23 @@ class _LoginScreenState extends State<LoginScreen> {
               .take(9)
               .toList();
 
-          // Precache images
-          for (final url in bannerUrls) {
-            precacheImage(CachedNetworkImageProvider(url), context);
+          // Precache images (mobile only, web handles lazy loading natively)
+          if (!kIsWeb) {
+            try {
+              for (final url in bannerUrls) {
+                precacheImage(CachedNetworkImageProvider(url), context);
+              }
+              for (final url in categoryUrls) {
+                precacheImage(CachedNetworkImageProvider(url), context);
+              }
+              for (final url in spareUrls) {
+                precacheImage(CachedNetworkImageProvider(url), context);
+              }
+              debugPrint("✅ Background Prefetch: Precached banner, category, and spare images");
+            } catch (e) {
+              debugPrint("Prefetch error: $e");
+            }
           }
-          for (final url in categoryUrls) {
-            precacheImage(
-              CachedNetworkImageProvider(url),
-              context,
-            );
-          }
-          for (final url in spareUrls) {
-            precacheImage(
-              CachedNetworkImageProvider(url),
-              context,
-            );
-          }
-          debugPrint("✅ Background Prefetch: Precached banner, category, and spare images");
         }
       }
     } catch (e) {
@@ -110,19 +110,6 @@ class _LoginScreenState extends State<LoginScreen> {
     phone.startsWith('+') ? phone : "+91$phone";
     print("formattedPhone$formattedPhone");
     
-    if (kIsWeb) {
-      if (mounted) {
-        setState(() {
-          loading = false;
-        });
-      }
-      Get.to(() => OtpView(
-            number: phone,
-            id: "web_otp",
-          ));
-      return;
-    }
-
     try {
       await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: formattedPhone,
@@ -145,11 +132,14 @@ class _LoginScreenState extends State<LoginScreen> {
       },
 
       verificationFailed: (FirebaseAuthException e) {
-        setState(() {
-          loading = false;
-        });
+        if (mounted) {
+          setState(() {
+            loading = false;
+          });
+        }
         print("OTP Error Code: ${e.code}");
         print("OTP Error Message: ${e.message}");
+        Get.snackbar("Verification Failed", e.message ?? "Failed to send OTP. Please check your phone number.");
       },
 
       codeSent: (String verificationId, int? resendToken) {
@@ -158,7 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
         setState(() {
           loading = false;
         });
-        Get.to(() => OtpView(number: phone,id:verificationId));
+        Get.to(() => OtpView(number: phone, id: verificationId), routeName: '/otp');
       },
 
       codeAutoRetrievalTimeout: (String verificationId) {

@@ -16,7 +16,10 @@ class ApiService {
     final url = Uri.parse("$baseUrl/$endpoint");
 
     try {
-      final response = await http.get(url);
+      final response = await http.get(
+        url,
+        headers: {'Accept': 'application/json'},
+      );
 
       return _responseHandler(response);
     } catch (e) {
@@ -24,28 +27,36 @@ class ApiService {
     }
   }
 
-  // Future<Response> login(String number, String otp) async {
-  //   final form = FormData({
-  //     "phone": number,
-  //     "otp": otp,
-  //   });
-  //
-  //   return post(
-  //     "login", // no slash if baseUrl already ends with /
-  //     form,
-  //   );
-  // }
-
   static Future<dynamic> postRequest(String endpoint, Map<String, dynamic> body) async {
     final url = Uri.parse("$baseUrl/$endpoint");
 
     try {
-      final response = await http.post(
+      // Primary attempt: JSON payload with AJAX headers
+      http.Response response = await http.post(
         url,
-        body: body,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: jsonEncode(body),
       );
-      print(body.toString());
-      print(url.toString());
+      print("POST $url => Status: ${response.statusCode}");
+
+      // Retry attempt: Form-encoded if CSRF 419 encountered
+      if (response.statusCode == 419) {
+        final Map<String, String> stringBody =
+            body.map((k, v) => MapEntry(k, v.toString()));
+        response = await http.post(
+          url,
+          headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+          body: stringBody,
+        );
+        print("RETRY POST $url => Status: ${response.statusCode}");
+      }
 
       return _responseHandler(response);
     } catch (e) {
@@ -54,9 +65,20 @@ class ApiService {
   }
 
   static dynamic _responseHandler(http.Response response) {
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
+    try {
+      final decoded = jsonDecode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return decoded;
+      } else {
+        if (decoded is Map) {
+          return decoded;
+        }
+        return {
+          "status": false,
+          "message": "Error: ${response.statusCode}"
+        };
+      }
+    } catch (_) {
       return {
         "status": false,
         "message": "Error: ${response.statusCode}"
@@ -72,7 +94,7 @@ class ApiService {
     var token = await AuthHelper.getString("token");
     debugPrint(token);
     try {
-      var headers = {'Accept': '*/*', 'Authorization': 'Bearer $token'};
+      var headers = {'Accept': 'application/json', 'Authorization': 'Bearer $token'};
       
       // Use direct http.get with timeout to prevent socket-reuse hangs on mobile
       final response = await http.get(
@@ -117,14 +139,23 @@ class ApiService {
     print(requestData);
       try {
         var headers = isAuthorized == false
-            ? {'Content-Type': 'application/json', 'Accept': '*/*'}
+            ? {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+              }
             : requestData == null
-            ? {'Accept': '*/*', 'Authorization': 'Bearer $token'}
+            ? {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer $token',
+                'X-Requested-With': 'XMLHttpRequest',
+              }
             : {
-          'Accept': '*/*',
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json'
-        };
+                'Accept': 'application/json',
+                'Authorization': 'Bearer $token',
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+              };
         var request = http.Request(
             'POST', Uri.parse("$baseUrl$uri"));
 
