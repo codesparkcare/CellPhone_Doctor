@@ -15,8 +15,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   usePathUrlStrategy();
 
-  try {
-    if (kIsWeb) {
+  if (kIsWeb) {
+    try {
       await Firebase.initializeApp(
         options: const FirebaseOptions(
           apiKey: "AIzaSyBQQSGErCmPckWbo-_IUTJfEMxDFQKS5hk",
@@ -27,9 +27,30 @@ void main() async {
           storageBucket: "the-cellphone-doctor.firebasestorage.app",
         ),
       );
-    } else {
-      await Firebase.initializeApp();
+    } catch (e) {
+      debugPrint("Firebase initialization error (Web): $e");
+    }
+  } else {
+    try {
+      if (Firebase.apps.isEmpty) {
+        await Firebase.initializeApp(
+          options: const FirebaseOptions(
+            apiKey: "AIzaSyBQQSGErCmPckWbo-_IUTJfEMxDFQKS5hk",
+            appId: "1:159217464337:ios:9f27e8d4af5ec6bdec6db0",
+            messagingSenderId: "159217464337",
+            projectId: "the-cellphone-doctor",
+            authDomain: "the-cellphone-doctor.firebaseapp.com",
+            storageBucket: "the-cellphone-doctor.firebasestorage.app",
+            iosBundleId: "com.cellphone.doctor.cellphoneDoctor",
+            iosClientId: "159217464337-sulcve914041i78inutd74jr048lgu59.apps.googleusercontent.com",
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint("Firebase initializeApp error: $e");
+    }
 
+    try {
       // Initialize background sync worker
       Workmanager().initialize(
         callbackDispatcher,
@@ -46,13 +67,17 @@ void main() async {
         "2",
         "immediateDataPrefetch",
       );
+    } catch (e) {
+      debugPrint("Workmanager initialization error: $e");
+    }
 
+    try {
       await SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
       ]);
+    } catch (e) {
+      debugPrint("SystemChrome orientation error: $e");
     }
-  } catch (e) {
-    debugPrint("Firebase initialization error: $e");
   }
 
   runApp(const MyApp());

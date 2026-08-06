@@ -1,4 +1,5 @@
 import 'package:cellphone_doctor/screens/Auth/controller/auth_controller.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -111,6 +112,31 @@ class _LoginScreenState extends State<LoginScreen> {
     print("formattedPhone$formattedPhone");
     
     try {
+      if (Firebase.apps.isEmpty) {
+        try {
+          await Firebase.initializeApp();
+        } catch (_) {
+          await Firebase.initializeApp(
+            options: const FirebaseOptions(
+              apiKey: "AIzaSyBQQSGErCmPckWbo-_IUTJfEMxDFQKS5hk",
+              appId: "1:159217464337:ios:9f27e8d4af5ec6bdec6db0",
+              messagingSenderId: "159217464337",
+              projectId: "the-cellphone-doctor",
+              authDomain: "the-cellphone-doctor.firebaseapp.com",
+              storageBucket: "the-cellphone-doctor.firebasestorage.app",
+              iosBundleId: "com.cellphone.doctor.cellphoneDoctor",
+              iosClientId: "159217464337-sulcve914041i78inutd74jr048lgu59.apps.googleusercontent.com",
+            ),
+          );
+        }
+      }
+
+      if (kDebugMode) {
+        await FirebaseAuth.instance.setSettings(
+          appVerificationDisabledForTesting: true,
+        );
+      }
+
       await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: formattedPhone,
 

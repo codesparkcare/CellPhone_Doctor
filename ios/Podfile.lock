@@ -11,21 +11,21 @@ PODS:
   - GoogleMaps (9.4.0):
     - GoogleMaps/Maps (= 9.4.0)
   - GoogleMaps/Maps (9.4.0)
-  - libwebp (1.5.0):
-    - libwebp/demux (= 1.5.0)
-    - libwebp/mux (= 1.5.0)
-    - libwebp/sharpyuv (= 1.5.0)
-    - libwebp/webp (= 1.5.0)
-  - libwebp/demux (1.5.0):
+  - libwebp (1.6.0):
+    - libwebp/demux (= 1.6.0)
+    - libwebp/mux (= 1.6.0)
+    - libwebp/sharpyuv (= 1.6.0)
+    - libwebp/webp (= 1.6.0)
+  - libwebp/demux (1.6.0):
     - libwebp/webp
-  - libwebp/mux (1.5.0):
+  - libwebp/mux (1.6.0):
     - libwebp/demux
-  - libwebp/sharpyuv (1.5.0)
-  - libwebp/webp (1.5.0):
+  - libwebp/sharpyuv (1.6.0)
+  - libwebp/webp (1.6.0):
     - libwebp/sharpyuv
-  - razorpay-core-pod (1.0.6)
-  - razorpay-pod (1.5.3):
-    - razorpay-core-pod (= 1.0.6)
+  - razorpay-core-pod (1.0.7)
+  - razorpay-pod (1.5.6):
+    - razorpay-core-pod (= 1.0.7)
   - razorpay_flutter (1.1.10):
     - Flutter
     - razorpay-pod
@@ -71,13 +71,13 @@ SPEC CHECKSUMS:
   Google-Maps-iOS-Utils: 0a484b05ed21d88c9f9ebbacb007956edd508a96
   google_maps_flutter_ios: 17552876e72723da1d41accc22f03b5f7afbde69
   GoogleMaps: 0608099d4870cac8754bdba9b6953db543432438
-  libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
-  razorpay-core-pod: 6da5fb4ed280279d665507fdb50e213d793a5fe2
-  razorpay-pod: 4385cf844aa29389313b741e20c72fe668970d49
+  libwebp: af5937a13536ef73f3784d69cc342b98961acf33
+  razorpay-core-pod: c7f3ac3d214c1a7fac4e9a59c1de7eac02130573
+  razorpay-pod: e939db88bc67c33a84bcc419505b8546b1081023
   razorpay_flutter: 0e98e4fcaae27ad50e011d85f66d85e0a008754a
   video_thumbnail: b637e0ad5f588ca9945f6e2c927f73a69a661140
   workmanager_apple: 904529ae31e97fc5be632cf628507652294a0778
 
-PODFILE CHECKSUM: 5218d3fe8a21ba06809ac963af418e76f248e621
+PODFILE CHECKSUM: f960a7b5112c54ef3b58f073507fa2bae540f10a
 
 COCOAPODS: 1.17.0
