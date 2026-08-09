@@ -1,5 +1,4 @@
 import 'package:cellphone_doctor/screens/Auth/controller/auth_controller.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -103,95 +102,51 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> sendOtp(String phone) async {
-    setState(() {
-      loading = true;
-    });
+    final OtpController otpController = Get.put(OtpController());
+    otpController.phoneNumber = phone;
+    otpController.verificationId = "";
+
+    // Instantly transition to OtpView for 0-latency UI experience
+    Get.to(() => OtpView(number: phone, id: ""), routeName: '/otp');
 
     String formattedPhone =
-    phone.startsWith('+') ? phone : "+91$phone";
-    print("formattedPhone$formattedPhone");
-    
+        phone.startsWith('+') ? phone : "+91$phone";
+    print("formattedPhone: $formattedPhone");
+
     try {
-      if (Firebase.apps.isEmpty) {
-        try {
-          await Firebase.initializeApp();
-        } catch (_) {
-          await Firebase.initializeApp(
-            options: const FirebaseOptions(
-              apiKey: "AIzaSyBQQSGErCmPckWbo-_IUTJfEMxDFQKS5hk",
-              appId: "1:159217464337:ios:9f27e8d4af5ec6bdec6db0",
-              messagingSenderId: "159217464337",
-              projectId: "the-cellphone-doctor",
-              authDomain: "the-cellphone-doctor.firebaseapp.com",
-              storageBucket: "the-cellphone-doctor.firebasestorage.app",
-              iosBundleId: "com.cellphone.doctor.cellphoneDoctor",
-              iosClientId: "159217464337-sulcve914041i78inutd74jr048lgu59.apps.googleusercontent.com",
-            ),
-          );
-        }
-      }
-
-      if (kDebugMode) {
-        await FirebaseAuth.instance.setSettings(
-          appVerificationDisabledForTesting: true,
-        );
-      }
-
       await FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: formattedPhone,
+        phoneNumber: formattedPhone,
+        timeout: const Duration(seconds: 30),
 
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        try {
-          await FirebaseAuth.instance.signInWithCredential(credential);
-          final OtpController otpController = Get.put(OtpController());
-          otpController.phoneNumber = phone;
-          await otpController.login();
-        } catch (e) {
-          print("Auto sign-in error: $e");
-          Get.snackbar("Error", "Auto-verification failed.");
-        }
-        if (mounted) {
-          setState(() {
-            loading = false;
-          });
-        }
-      },
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          try {
+            await FirebaseAuth.instance.signInWithCredential(credential);
+            otpController.phoneNumber = phone;
+            await otpController.login();
+          } catch (e) {
+            print("Auto sign-in error: $e");
+          }
+        },
 
-      verificationFailed: (FirebaseAuthException e) {
-        if (mounted) {
-          setState(() {
-            loading = false;
-          });
-        }
-        print("OTP Error Code: ${e.code}");
-        print("OTP Error Message: ${e.message}");
-        Get.snackbar("Verification Failed", e.message ?? "Failed to send OTP. Please check your phone number.");
-      },
+        verificationFailed: (FirebaseAuthException e) {
+          print("OTP Error Code: ${e.code}");
+          print("OTP Error Message: ${e.message}");
+          Get.snackbar("Verification Failed", e.message ?? "Failed to send OTP. Please check your phone number.");
+        },
 
-      codeSent: (String verificationId, int? resendToken) {
-        otpVerificationId = verificationId;
-        print("✅ OTP Sent Successfully");
-        setState(() {
-          loading = false;
-        });
-        Get.to(() => OtpView(number: phone, id: verificationId), routeName: '/otp');
-      },
+        codeSent: (String verificationId, int? resendToken) {
+          otpVerificationId = verificationId;
+          print("✅ OTP Sent Successfully");
+          otpController.setVerificationId(verificationId);
+        },
 
-      codeAutoRetrievalTimeout: (String verificationId) {
-        print("Auto Retrieval Timeout");
-        if (mounted) {
-          setState(() {
-            loading = false;
-          });
-        }
-      },
-    );
+        codeAutoRetrievalTimeout: (String verificationId) {
+          print("Auto Retrieval Timeout");
+          otpVerificationId = verificationId;
+          otpController.setVerificationId(verificationId);
+        },
+      );
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          loading = false;
-        });
-      }
       print("Synchronous error during verifyPhoneNumber: $e");
       Get.snackbar("Error", "Could not request OTP: $e");
     }

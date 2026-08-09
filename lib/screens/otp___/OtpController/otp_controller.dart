@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../../../ApiService/ApiService.dart';
 import '../../../helpers/auth_helper.dart';
@@ -13,6 +11,7 @@ import '../../main_screen.dart';
 class OtpController extends GetxController {
   String otp = "";
   String phoneNumber = "";
+  String verificationId = "";
   bool isLoading = false;
   bool isResending = false;
   int resendTimer = 0;
@@ -20,6 +19,20 @@ class OtpController extends GetxController {
   Rxn<LoginResponseModel > loginResponse = Rxn<LoginResponseModel >();
 
   final ApiService apiService = ApiService();
+
+  void setVerificationId(String id) {
+    verificationId = id;
+    resendTimer = 60;
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      resendTimer--;
+      update();
+      if (resendTimer <= 0) {
+        timer.cancel();
+      }
+    });
+    update();
+  }
 
   void addDigit(String digit) {
     if (otp.length < 6) {
@@ -53,32 +66,9 @@ class OtpController extends GetxController {
         phoneNumber.startsWith('+') ? phoneNumber : "+91$phoneNumber";
 
     try {
-      if (Firebase.apps.isEmpty) {
-        try {
-          await Firebase.initializeApp();
-        } catch (_) {
-          await Firebase.initializeApp(
-            options: const FirebaseOptions(
-              apiKey: "AIzaSyBQQSGErCmPckWbo-_IUTJfEMxDFQKS5hk",
-              appId: "1:159217464337:ios:9f27e8d4af5ec6bdec6db0",
-              messagingSenderId: "159217464337",
-              projectId: "the-cellphone-doctor",
-              authDomain: "the-cellphone-doctor.firebaseapp.com",
-              storageBucket: "the-cellphone-doctor.firebasestorage.app",
-              iosBundleId: "com.cellphone.doctor.cellphoneDoctor",
-              iosClientId: "159217464337-sulcve914041i78inutd74jr048lgu59.apps.googleusercontent.com",
-            ),
-          );
-        }
-      }
-      if (kDebugMode) {
-        await FirebaseAuth.instance.setSettings(
-          appVerificationDisabledForTesting: true,
-        );
-      }
-
       await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: formattedPhone,
+        timeout: const Duration(seconds: 30),
         verificationCompleted: (PhoneAuthCredential credential) async {
           // Auto-retrieval or instant verification
         },
@@ -88,26 +78,15 @@ class OtpController extends GetxController {
           isResending = false;
           update();
         },
-        codeSent: (String verificationId, int? resendToken) {
+        codeSent: (String newVerificationId, int? resendToken) {
           print("✅ OTP RESENT SUCCESSFULLY");
           Get.snackbar("Success", "OTP sent successfully");
-          onVerificationIdReceived(verificationId);
-          
-          // Start 60-second timer
-          resendTimer = 60;
-          _timer?.cancel();
-          _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-            resendTimer--;
-            update();
-            if (resendTimer <= 0) {
-              timer.cancel();
-            }
-          });
-          
+          onVerificationIdReceived(newVerificationId);
+          setVerificationId(newVerificationId);
           isResending = false;
           update();
         },
-        codeAutoRetrievalTimeout: (String verificationId) {
+        codeAutoRetrievalTimeout: (String newVerificationId) {
           isResending = false;
           update();
         },

@@ -53,18 +53,25 @@ class _OtpViewState extends State<OtpView> {
   Future<void> _handleOtpSubmit(String otpCode) async {
     if (_isVerifying || otpCode.trim().length != 6) return;
 
+    final OtpController controller = Get.find<OtpController>();
+    String activeId = verificationId.isNotEmpty ? verificationId : controller.verificationId;
+
+    if (activeId.isEmpty && !kIsWeb) {
+      Get.snackbar("Please Wait", "OTP code is still being generated. Please wait a moment.");
+      return;
+    }
+
     setState(() {
       _isVerifying = true;
     });
 
     try {
-      final OtpController controller = Get.find<OtpController>();
       controller.phoneNumber = widget.number;
       controller.otp = otpCode.trim();
 
-      if (verificationId != "web_otp" && FirebaseAuth.instance.currentUser == null) {
+      if (activeId != "web_otp" && FirebaseAuth.instance.currentUser == null) {
         PhoneAuthCredential credential = PhoneAuthProvider.credential(
-          verificationId: verificationId,
+          verificationId: activeId,
           smsCode: otpCode.trim(),
         );
         await FirebaseAuth.instance.signInWithCredential(credential);
