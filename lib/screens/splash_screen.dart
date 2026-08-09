@@ -1,15 +1,11 @@
-// $file
-import 'package:cellphone_doctor/screens/main_screen.dart';
+import 'dart:async';
+import 'package:cellphone_doctor/screens/Auth/login_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:video_player/video_player.dart';
 
 import '../helpers/auth_helper.dart';
 import '../services/splash/splash_services.dart';
-
-
-
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,37 +15,135 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   final SplashServices _splashServices = SplashServices();
+  late VideoPlayerController _controller;
+  bool _isVideoInitialized = false;
+  Widget? _targetScreen;
+  bool _hasNavigated = false;
+  bool _shouldNavigateWhenTargetReady = false;
+  Timer? _fallbackTimer;
 
   @override
   void initState() {
     super.initState();
-    getLoginStatus();
+    _initVideoAndAuth();
   }
 
-  getLoginStatus() async {
-    var isOnBoard = await AuthHelper.getBool("isShowOnBoard")??false;
-    setState(() {});
-    if (mounted) {
-      _splashServices.isLogin(context, isOnBoard ?? false);
+  Future<void> _initVideoAndAuth() async {
+    // 1. Initialize Video Player
+    _controller = VideoPlayerController.asset("assets/Splash_Video/cellphone.mp4");
+
+    _controller.initialize().then((_) {
+      if (mounted) {
+        setState(() {
+          _isVideoInitialized = true;
+        });
+        _controller.setVolume(1.0);
+        _controller.play();
+        // Add video completion listener AFTER initialization is ready and playing
+        _controller.addListener(_videoListener);
+      }
+    }).catchError((e) {
+      debugPrint("Splash Video initialization error: $e");
+      // Fallback navigation if video fails to initialize
+      _navigateToNextScreen();
+    });
+
+    // 2. Fallback timer in case video hangs
+    _fallbackTimer = Timer(const Duration(seconds: 12), () {
+      _navigateToNextScreen();
+    });
+
+    // 3. Perform background login/profile status check simultaneously
+    try {
+      var isOnBoard = await AuthHelper.getBool("isShowOnBoard") ?? false;
+      if (mounted) {
+        Widget target = await _splashServices.getTargetScreen(context, isOnBoard);
+        _targetScreen = target;
+        if (_shouldNavigateWhenTargetReady) {
+          _navigateToNextScreen();
+        }
+      }
+    } catch (e) {
+      debugPrint("Splash target fetch error: $e");
+      _targetScreen = const LoginScreen();
+      if (_shouldNavigateWhenTargetReady) {
+        _navigateToNextScreen();
+      }
+    }
+  }
+
+  void _videoListener() {
+    if (!_controller.value.isInitialized) return;
+
+    final duration = _controller.value.duration;
+    final position = _controller.value.position;
+
+    // Only trigger completion when video has actually played beyond start and reached end
+    if (duration > Duration.zero && position > const Duration(milliseconds: 500)) {
+      if (position >= duration - const Duration(milliseconds: 200)) {
+        _navigateToNextScreen();
+      }
+    }
+  }
+
+  void _navigateToNextScreen() {
+    if (_hasNavigated) return;
+
+    if (_targetScreen != null) {
+      _hasNavigated = true;
+      _fallbackTimer?.cancel();
+      _controller.removeListener(_videoListener);
+      _controller.pause();
+      Get.off(() => _targetScreen!);
+    } else {
+      _shouldNavigateWhenTargetReady = true;
     }
   }
 
   @override
+  void dispose() {
+    _fallbackTimer?.cancel();
+    _controller.removeListener(_videoListener);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Image.asset(
-          "assets/Icon/Icon.png",
-          width: 250.w,
-          height: 250.w,
-          fit: BoxFit.contain,
+    return GestureDetector(
+      onTap: _navigateToNextScreen,
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: Stack(
+          children: [
+            // Video Player
+            Positioned.fill(
+              child: _isVideoInitialized
+                  ? Center(
+                      child: AspectRatio(
+                        aspectRatio: _controller.value.aspectRatio > 0
+                            ? _controller.value.aspectRatio
+                            : (9 / 16),
+                        child: VideoPlayer(_controller),
+                      ),
+                    )
+                  : Container(
+                      color: Colors.black,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+
 
 
 /*

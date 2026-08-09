@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -156,13 +155,16 @@ class OtpController extends GetxController {
 
       // SUCCESS CHECK
       if (loginResponse.value?.token != null && loginResponse.value!.token!.isNotEmpty) {
-        Get.snackbar("Success", loginResponse.value!.message.toString()??"");
-        if(loginResponse.value!.type.toString() != "existing_user"){
-          Get.offAll(() => CreateProfileScreen(token:loginResponse.value!.token.toString(),number: phoneNumber.toString(),));
-        } else{
-          await AuthHelper.setBool("isShowOnBoard",true);
-          await AuthHelper.setString("token",loginResponse.value!.token.toString());
-          await AuthHelper.setString("userid",loginResponse.value!.customer!.id.toString());
+        Get.snackbar("Success", loginResponse.value?.message ?? "");
+        String token = loginResponse.value!.token.toString();
+        String userId = loginResponse.value!.customer?.id?.toString() ?? "";
+
+        // Save session persistently so user does not get logged out
+        await AuthHelper.saveSession(token: token, userId: userId);
+
+        if (loginResponse.value!.type.toString() != "existing_user") {
+          Get.offAll(() => CreateProfileScreen(token: token, number: phoneNumber.toString()));
+        } else {
           Get.offAll(() => MainScreen());
         }
       } else {

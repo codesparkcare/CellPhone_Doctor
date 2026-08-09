@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CartController extends GetxController {
-  int selectedType = 0; // 0 = Pickup, 1 = Visit Store
+  int selectedType = -1; // -1 = None, 0 = Pickup, 1 = Visit Store, 2 = Onsite Service
   int selectedStoreIndex = 0;
 
   final List<File> uploadedImages = [];

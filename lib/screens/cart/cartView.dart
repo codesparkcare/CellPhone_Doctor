@@ -88,6 +88,8 @@ class _CartScreenState extends State<CartScreen> {
   String deliveryAddress= "Delivery Location";
   String? pickAddressError;
   String? deliveryAddressError;
+  String? serviceTypeError;
+  String? storeSelectionError;
   Map? pickDetailsFull;
   Map? deliveryDetailsFull;
 
@@ -209,34 +211,57 @@ class _CartScreenState extends State<CartScreen> {
   Future<void> confirmBookingApi(CartController ctrl) async {
     setState(() {
       _isConfirming = true;
+      serviceTypeError = null;
+      storeSelectionError = null;
+      pickAddressError = null;
+      deliveryAddressError = null;
+      pickupDateTimeError = null;
     });
     
     try {
-      // ✅ Validation for Pick up, Delivery, and Door Step addresses
-      if (ctrl.selectedType == 0 || ctrl.selectedType == 2) {
-        // Reset errors
+      // 1. Validate Service Mode Selection
+      if (ctrl.selectedType == -1) {
         setState(() {
-          pickAddressError = null;
-          deliveryAddressError = null;
+          serviceTypeError = "Please select a Service Mode";
+          _isConfirming = false;
         });
+        Get.snackbar("Validation Error", "Please select a Service Mode",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red.shade100,
+            colorText: Colors.red.shade900);
+        return;
+      }
 
-        // Validate pickup address only for "Pick up" (selectedType == 0)
-        if (ctrl.selectedType == 0) {
-          if (pickAddress == "Pick up Location" || pickAddress.isEmpty) {
-            setState(() {
-              pickAddressError = "Please select a pickup location";
-              _isConfirming = false;
-            });
-            Get.snackbar("Validation Error", "Please select a pickup location",
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: Colors.red.shade100,
-                colorText: Colors.red.shade900);
-            return;
-          }
+      // 2. Validate Visit Store Selection
+      if (ctrl.selectedType == 1) {
+        if (ctrl.selectedStoreIndex == 0) {
+          setState(() {
+            storeSelectionError = "Please select a branch for store visit";
+            _isConfirming = false;
+          });
+          Get.snackbar("Validation Error", "Please select a branch for store visit",
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.red.shade100,
+              colorText: Colors.red.shade900);
+          return;
+        }
+      }
+
+      // 3. Validate Pickup & Delivery
+      if (ctrl.selectedType == 0) {
+        if (pickAddress == "Pick up Location" || pickAddress.trim().isEmpty) {
+          setState(() {
+            pickAddressError = "Please select a pickup location";
+            _isConfirming = false;
+          });
+          Get.snackbar("Validation Error", "Please select a pickup location",
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.red.shade100,
+              colorText: Colors.red.shade900);
+          return;
         }
 
-        // Validate delivery address for both "Pick up" and "Door Step"
-        if (deliveryAddress == "Delivery Location" || deliveryAddress.isEmpty) {
+        if (deliveryAddress == "Delivery Location" || deliveryAddress.trim().isEmpty) {
           setState(() {
             deliveryAddressError = "Please select a delivery location";
             _isConfirming = false;
@@ -248,7 +273,6 @@ class _CartScreenState extends State<CartScreen> {
           return;
         }
 
-        // Validate pickup date and time for both "Pick up" and "Door Step"
         if (selectedPickupDateIndex == -1 || (selectedPickupDateIndex == 2 && customPickupDate == null)) {
           setState(() {
             pickupDateTimeError = "Please select a preferred pickup date";
@@ -261,7 +285,46 @@ class _CartScreenState extends State<CartScreen> {
           return;
         }
 
-        if (selectedPickupTimeSlot.isEmpty) {
+        if (selectedPickupTimeSlot.trim().isEmpty) {
+          setState(() {
+            pickupDateTimeError = "Please select a preferred time slot";
+            _isConfirming = false;
+          });
+          Get.snackbar("Validation Error", "Please select a preferred time slot",
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.red.shade100,
+              colorText: Colors.red.shade900);
+          return;
+        }
+      }
+
+      // 4. Validate Onsite Service
+      if (ctrl.selectedType == 2) {
+        if (deliveryAddress == "Delivery Location" || deliveryAddress == "Customer Service Location" || deliveryAddress.trim().isEmpty) {
+          setState(() {
+            deliveryAddressError = "Please select a service location";
+            _isConfirming = false;
+          });
+          Get.snackbar("Validation Error", "Please select a service location",
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.red.shade100,
+              colorText: Colors.red.shade900);
+          return;
+        }
+
+        if (selectedPickupDateIndex == -1 || (selectedPickupDateIndex == 2 && customPickupDate == null)) {
+          setState(() {
+            pickupDateTimeError = "Please select a preferred service date";
+            _isConfirming = false;
+          });
+          Get.snackbar("Validation Error", "Please select a preferred service date",
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.red.shade100,
+              colorText: Colors.red.shade900);
+          return;
+        }
+
+        if (selectedPickupTimeSlot.trim().isEmpty) {
           setState(() {
             pickupDateTimeError = "Please select a preferred time slot";
             _isConfirming = false;
@@ -698,7 +761,7 @@ class _CartScreenState extends State<CartScreen> {
     
     randomHeaderIndex = Random().nextInt(4) + 1;
 
-    cartController.selectedType = 1;
+    cartController.selectedType = -1;
     getCart(context);
     getNearStore(context);
     address();
@@ -1624,6 +1687,17 @@ class _CartScreenState extends State<CartScreen> {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
+                  if (serviceTypeError != null) ...[
+                    SizedBox(height: 4.h),
+                    Text(
+                      serviceTypeError!,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Colors.red,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                   SizedBox(height: 10.h),
       
                   Row(
@@ -1639,11 +1713,11 @@ class _CartScreenState extends State<CartScreen> {
                         isSelected: ctrl.selectedType == 1,
                         onTap: () {
                           ctrl.selectServiceType(1);
-                          if (getNearByStoreResponseModel != null &&
-                              getNearByStoreResponseModel!.data!.isNotEmpty) {
-                            ctrl.selectStore(int.parse(
-                                getNearByStoreResponseModel!.data!.first.id!.toString()));
-                          }
+                          ctrl.selectStore(0);
+                          setState(() {
+                            serviceTypeError = null;
+                            storeSelectionError = null;
+                          });
                         },
                       ),
                       SizedBox(width: 8.w),
@@ -1655,7 +1729,15 @@ class _CartScreenState extends State<CartScreen> {
                         subtitle: "We collect and return\nyour device",
                         baseColor: Colors.green,
                         isSelected: ctrl.selectedType == 0,
-                        onTap: () => ctrl.selectServiceType(0),
+                        onTap: () {
+                          ctrl.selectServiceType(0);
+                          setState(() {
+                            serviceTypeError = null;
+                            pickAddressError = null;
+                            deliveryAddressError = null;
+                            pickupDateTimeError = null;
+                          });
+                        },
                       ),
                       SizedBox(width: 8.w),
                       serviceTypeButton(
@@ -1669,6 +1751,9 @@ class _CartScreenState extends State<CartScreen> {
                         onTap: () {
                           ctrl.selectServiceType(2);
                           setState(() {
+                            serviceTypeError = null;
+                            deliveryAddressError = null;
+                            pickupDateTimeError = null;
                             isDeliverySameAsPickup = false;
                             deliveryAddress = "";
                             deliveryDetailsFull = null;
@@ -1683,7 +1768,7 @@ class _CartScreenState extends State<CartScreen> {
       
                   if (ctrl.selectedType == 0 || ctrl.selectedType == 2)
                     buildPickupDeliverySection(ctrl)
-                  else
+                  else if (ctrl.selectedType == 1)
                     buildStoreSelection(ctrl),
                   SizedBox(height: 10.h),
                   buildPaymentSection(),
@@ -1951,17 +2036,18 @@ class _CartScreenState extends State<CartScreen> {
           ),
         ],
         SizedBox(height: 20.h),
-        buildPickupDeliveryDetailsSection(),
+        buildPickupDeliveryDetailsSection(ctrl),
       ],
     );
   }
 
-  Widget buildPickupDeliveryDetailsSection() {
+  Widget buildPickupDeliveryDetailsSection(CartController ctrl) {
+    bool isDoorStep = ctrl.selectedType == 2;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Pickup & Delivery Details",
+          isDoorStep ? "Onsite Service Details" : "Pickup & Delivery Details",
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w800,
@@ -1969,7 +2055,7 @@ class _CartScreenState extends State<CartScreen> {
         ),
         SizedBox(height: 16.h),
         Text(
-          "Preferred Pickup Date",
+          isDoorStep ? "Preferred Service Date" : "Preferred Pickup Date",
           style: TextStyle(
             fontSize: 14.sp,
             fontWeight: FontWeight.w700,
@@ -2047,7 +2133,7 @@ class _CartScreenState extends State<CartScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Pickup & Delivery Charges", style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w700)),
+                        Text(isDoorStep ? "Onsite Service Charges" : "Pickup & Delivery Charges", style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w700)),
                         SizedBox(height: 2.h),
                         Text("Applicable for this service", style: TextStyle(fontSize: 11.sp, color: Colors.grey.shade600)),
                       ],
@@ -2085,7 +2171,7 @@ class _CartScreenState extends State<CartScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Pickup Executive", style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w700)),
+                        Text(isDoorStep ? "Service Technician" : "Pickup Executive", style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w700)),
                         SizedBox(height: 2.h),
                         Text("Will be assigned after booking confirmation", style: TextStyle(fontSize: 11.sp, color: Colors.grey.shade600)),
                       ],
@@ -2110,7 +2196,9 @@ class _CartScreenState extends State<CartScreen> {
               SizedBox(width: 12.w),
               Expanded(
                 child: Text(
-                  "We will collect your device from the above address and return after service completion.",
+                  isDoorStep
+                      ? "Our expert technician will visit your service location at the scheduled date and time."
+                      : "We will collect your device from the above address and return after service completion.",
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: Colors.blue.shade800,
@@ -2358,6 +2446,17 @@ class _CartScreenState extends State<CartScreen> {
             fontWeight: FontWeight.w600,
           ),
         ),
+        if (storeSelectionError != null) ...[
+          SizedBox(height: 4.h),
+          Text(
+            storeSelectionError!,
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: Colors.red,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
         SizedBox(height: 12.h),
         SizedBox(
           height: 230.h,
@@ -2374,7 +2473,9 @@ class _CartScreenState extends State<CartScreen> {
                   InkWell(
                     onTap: () {
                       ctrl.selectStore(isSelected ? 0 : locId);
-                      setState(() {});
+                      setState(() {
+                        storeSelectionError = null;
+                      });
                     },
                     child: StoreCard(
                       title: location.title ?? "",
@@ -2392,7 +2493,9 @@ class _CartScreenState extends State<CartScreen> {
                     child: InkWell(
                       onTap: () {
                         ctrl.selectStore(isSelected ? 0 : locId);
-                        setState(() {});
+                        setState(() {
+                          storeSelectionError = null;
+                        });
                       },
                       child: Container(
                         decoration: const BoxDecoration(

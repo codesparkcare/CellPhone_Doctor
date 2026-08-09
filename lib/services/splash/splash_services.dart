@@ -1,5 +1,5 @@
-import 'dart:async';
 import 'package:cellphone_doctor/screens/Auth/login_screen.dart';
+import 'package:cellphone_doctor/screens/ProfileView/create_profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import '../../helpers/auth_helper.dart';
@@ -8,54 +8,46 @@ import '../../ApiService/ApiService.dart';
 import '../../models/app/getProfileResponseModel.dart';
 
 class SplashServices {
-  Future<void> isLogin(BuildContext context, loginStatus) async {
-    bool hasSeenSplash = await AuthHelper.getBool("hasSeenSplash") ?? false;
-    
-    // Capture start time to respect splash duration
-    final startTime = DateTime.now();
-    bool isProfileValid = false;
+  Future<Widget> getTargetScreen(BuildContext context, bool loginStatus) async {
+    String token = await AuthHelper.getString("token") ?? "";
 
-    if (loginStatus) {
-      try {
-        final result = await ApiService.getData(
-          uri: "/customer/profile",
-          isAuthorized: true,
-          context: context,
-        );
+    if (token.isEmpty) {
+      return const LoginScreen();
+    }
 
-        if (result != null && result != "failed") {
-          final profile = GetProfileResponseModel.fromJson(result);
-          // Check if user has completely filled out their profile
-          if (profile.name.trim().isNotEmpty && profile.email.trim().isNotEmpty) {
-            isProfileValid = true;
-          }
+    try {
+      final result = await ApiService.getData(
+        uri: "/customer/profile",
+        isAuthorized: true,
+        context: context,
+      );
+
+      if (result != null && result != "failed") {
+        final profile = GetProfileResponseModel.fromJson(result);
+        bool isProfileComplete = profile.name.trim().isNotEmpty &&
+            profile.email.trim().isNotEmpty &&
+            profile.address.trim().isNotEmpty;
+
+        if (isProfileComplete) {
+          return MainScreen();
+        } else {
+          // Mandatory completion: incomplete profile must complete CreateProfileScreen first
+          return CreateProfileScreen(
+            token: token,
+            number: profile.phone.isNotEmpty ? profile.phone : "",
+          );
         }
-      } catch (e) {
-        debugPrint("Splash Profile Check Error: $e");
       }
+    } catch (e) {
+      debugPrint("Splash Profile Check Error: $e");
     }
 
-    if (!hasSeenSplash) {
-      await AuthHelper.setBool("hasSeenSplash", true);
-    }
+    return MainScreen();
+  }
 
-    int splashDuration = hasSeenSplash ? 0 : 3;
-    final elapsedTime = DateTime.now().difference(startTime).inMilliseconds;
-    final requiredWait = (splashDuration * 1000) - elapsedTime;
-
-    if (requiredWait > 0) {
-      await Future.delayed(Duration(milliseconds: requiredWait));
-    }
-
-    if (loginStatus && isProfileValid) {
-      Get.off(() => MainScreen());
-    } else {
-      if (loginStatus && !isProfileValid) {
-        // Clear invalid or backed-up incomplete session
-        await AuthHelper.setBool("isShowOnBoard", false);
-        await AuthHelper.setString("token", "");
-      }
-      Get.off(() => LoginScreen());
-    }
+  Future<void> isLogin(BuildContext context, bool loginStatus) async {
+    final target = await getTargetScreen(context, loginStatus);
+    Get.off(() => target);
   }
 }
+

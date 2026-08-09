@@ -169,13 +169,13 @@ class CourseView extends StatelessWidget {
                     physics: const BouncingScrollPhysics(),
                     child: Row(
                       children: [
-                        _buildFeatureCard(Icons.verified_user_outlined, "ISO\nCertificate", "Get ISO Certified\nCertificate upon\nsuccessful\ncompletion."),
+                        _buildFeatureCard(Icons.verified_user_outlined, "ISO Certificate", "Get ISO Certified Certificate upon successful completion."),
                         SizedBox(width: 12.w),
-                        _buildFeatureCard(Icons.work_outline, "100%\nJob Placement", "We provide 100%\njob placement\nassistance to all\nour students."),
+                        _buildFeatureCard(Icons.work_outline, "100% Job Placement", "We provide 100% job placement assistance to all our students."),
                         SizedBox(width: 12.w),
-                        _buildFeatureCard(Icons.handshake_outlined, "Franchise\nOpportunity", "Get franchise\nopportunity to start\nyour own service\ncenter."),
+                        _buildFeatureCard(Icons.handshake_outlined, "Franchise Opportunity", "Get franchise opportunity to start your own service center."),
                         SizedBox(width: 12.w),
-                        _buildFeatureCard(Icons.support_agent_outlined, "Lifetime\nSupport", "Lifetime technical\nsupport even after\ncourse\ncompletion."),
+                        _buildFeatureCard(Icons.support_agent_outlined, "Lifetime Support", "Lifetime technical support even after course completion."),
                       ],
                     ),
                   ),
@@ -496,15 +496,23 @@ class CourseView extends StatelessWidget {
 // Reusable Feature Card
 Widget _buildFeatureCard(IconData icon, String title, String description) {
   return Container(
-    width: 100.w,
-    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
+    width: 125.w,
+    height: 205.h,
+    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 12.h),
     decoration: BoxDecoration(
       color: Colors.white,
       border: Border.all(color: Colors.grey.shade200),
-      borderRadius: BorderRadius.circular(10.r),
+      borderRadius: BorderRadius.circular(12.r),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 6,
+          offset: const Offset(0, 2),
+        ),
+      ],
     ),
     child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
           padding: EdgeInsets.all(10.r),
@@ -512,33 +520,44 @@ Widget _buildFeatureCard(IconData icon, String title, String description) {
             color: Colors.blue.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: Colors.blue.shade700, size: 28.sp),
+          child: Icon(icon, color: Colors.blue.shade700, size: 26.sp),
         ),
-        SizedBox(height: 12.h),
-        Text(
-          title,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 12.sp,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-            height: 1.2,
+        SizedBox(height: 10.h),
+        SizedBox(
+          height: 36.h,
+          child: Center(
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+                height: 1.2,
+              ),
+            ),
           ),
         ),
         SizedBox(height: 8.h),
         Container(
-          width: 20.w,
+          width: 24.w,
           height: 2.h,
           color: Colors.grey.shade300,
         ),
         SizedBox(height: 8.h),
-        Text(
-          description,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 10.sp,
-            color: Colors.black54,
-            height: 1.3,
+        Expanded(
+          child: Center(
+            child: Text(
+              description,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 10.sp,
+                color: Colors.black54,
+                height: 1.3,
+              ),
+            ),
           ),
         ),
       ],

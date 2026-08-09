@@ -45,6 +45,29 @@ class AuthHelper {
 
   static removeString(String key) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove(key);
+    await prefs.remove(key);
+  }
+
+  static Future<bool> isUserLoggedIn() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("token");
+    bool? isShowOnBoard = prefs.getBool("isShowOnBoard");
+    return token != null && token.isNotEmpty && (isShowOnBoard ?? false);
+  }
+
+  static Future<void> saveSession({required String token, String? userId}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("token", token);
+    await prefs.setBool("isShowOnBoard", true);
+    if (userId != null && userId.isNotEmpty) {
+      await prefs.setString("userid", userId);
+    }
+  }
+
+  static Future<void> clearSession() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("token", "");
+    await prefs.setBool("isShowOnBoard", false);
+    await prefs.remove("userid");
   }
 }

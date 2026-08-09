@@ -25,11 +25,14 @@ class ProfileView extends StatefulWidget {
   State<ProfileView> createState() => _ProfileViewState();
 }
 
-class _ProfileViewState extends State<ProfileView> {
+class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStateMixin {
   bool _isLoading = false;
   GetProfileResponseModel? getProfileResponseModel;
 
   final ProfileController controller = Get.put(ProfileController());
+
+  late AnimationController _animController;
+  late Animation<double> _glowAnimation;
 
   /// ✅ LOGIN STATUS
   Future<void> isLogin() async {
@@ -69,7 +72,20 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   void initState() {
     super.initState();
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat(reverse: true);
+    _glowAnimation = Tween<double>(begin: 0.85, end: 1.15).animate(
+      CurvedAnimation(parent: _animController, curve: Curves.easeInOut),
+    );
     isLogin();
+  }
+
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
   }
 
   @override
@@ -244,120 +260,257 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  Widget _buildProfileCard(ProfileController controller, GetProfileResponseModel? profile) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.grey.shade100),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 15,
-            spreadRadius: 2,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16.r),
-        child: Stack(
-          children: [
+  List<Color> _getAvatarGradient(String name) {
+    final gradients = [
+      [const Color(0xFF2196F3), const Color(0xFF00BCD4)], // Blue -> Cyan
+      [const Color(0xFF9C27B0), const Color(0xFFE91E63)], // Purple -> Pink
+      [const Color(0xFFFF9800), const Color(0xFFFF5722)], // Orange -> Deep Orange
+      [const Color(0xFF4CAF50), const Color(0xFF009688)], // Green -> Teal
+      [const Color(0xFF3F51B5), const Color(0xFF2196F3)], // Indigo -> Blue
+      [const Color(0xFF673AB7), const Color(0xFF9C27B0)], // Deep Purple -> Purple
+    ];
+    if (name.isEmpty) return gradients[0];
+    int hash = name.codeUnits.fold(0, (prev, element) => prev + element);
+    return gradients[hash % gradients.length];
+  }
 
-            Padding(
-              padding: EdgeInsets.all(16.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        controller.isExpanded ? (profile?.name ?? "User") : "Welcome!",
-                        style: TextStyle(
-                          fontSize: 22.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      if (controller.isExpanded)
-                        Directionality(
-                          textDirection: TextDirection.rtl,
-                          child: OutlinedButton.icon(
-                            onPressed: () async {
-                              final result = await Get.to(() => UpdateProfile(getProfileResponseModel: getProfileResponseModel));
-                              if (result != null && result is Map && result["success"] == "success") {
-                                getProfile();
-                              }
-                            },
-                            icon: Icon(Icons.edit_outlined, size: 14.sp, color: Colors.blue.shade700),
-                            label: Text("Edit Profile", style: TextStyle(color: Colors.blue.shade700, fontSize: 13.sp, fontWeight: FontWeight.bold)),
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(color: Colors.blue.shade700, width: 1.2),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.r),
-                              ),
-                              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 0),
-                              minimumSize: Size(0, 32.h),
-                            ),
-                          ),
-                        )
-                      else
-                        ElevatedButton(
-                          onPressed: () => Get.off(() => LoginScreen()),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue.shade700,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
-                            padding: EdgeInsets.symmetric(horizontal: 16.w),
-                            minimumSize: Size(0, 36.h),
-                          ),
-                          child: Text("Login", style: TextStyle(fontSize: 13.sp, color: Colors.white, fontWeight: FontWeight.bold)),
-                        ),
-                    ],
-                  ),
-                  SizedBox(height: 16.h),
-                  if (controller.isExpanded) ...[
-                    _buildProfileDetailRow(Icons.phone_outlined, profile?.phone ?? "N/A"),
-                    SizedBox(height: 10.h),
-                    _buildProfileDetailRow(Icons.email_outlined, profile?.email ?? "N/A"),
-                  ] else ...[
-                    Text("Login or Sign up to view your profile details and manage your account.", style: TextStyle(color: Colors.grey.shade600, fontSize: 14.sp)),
+  Widget _buildAnimatedAvatar(String name) {
+    final initial = name.trim().isNotEmpty ? name.trim()[0].toUpperCase() : "U";
+    final gradient = _getAvatarGradient(name);
+
+    return AnimatedBuilder(
+      animation: _animController,
+      builder: (context, child) {
+        return Container(
+          padding: EdgeInsets.all(2.5.w),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              colors: gradient,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: gradient[0].withValues(alpha: 0.35 * _glowAnimation.value),
+                blurRadius: 10 * _glowAnimation.value,
+                spreadRadius: 1,
+              ),
+            ],
+          ),
+          child: Container(
+            width: 44.w,
+            height: 44.h,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: gradient,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              border: Border.all(color: Colors.white, width: 2),
+            ),
+            child: Center(
+              child: Text(
+                initial,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                  shadows: const [
+                    Shadow(color: Colors.black26, offset: Offset(0, 1), blurRadius: 3),
                   ],
-                ],
+                ),
               ),
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildProfileCard(ProfileController controller, GetProfileResponseModel? profile) {
+    final userName = controller.isExpanded ? (profile?.name ?? "User") : "Welcome!";
+
+    return AnimatedBuilder(
+      animation: _animController,
+      builder: (context, child) {
+        return Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20.r),
+            gradient: const LinearGradient(
+              colors: [
+                Color(0xFFEBF3FE), // Soft sky blue
+                Color(0xFFF9F5FF), // Subtle pastel lavender
+                Color(0xFFF0F7FF), // Gentle mint blue
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            border: Border.all(color: Colors.blue.withValues(alpha: 0.18), width: 1.2),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF2196F3).withValues(alpha: 0.08 * _glowAnimation.value),
+                blurRadius: 20 * _glowAnimation.value,
+                spreadRadius: 2,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20.r),
+            child: Stack(
+              children: [
+                // Animated soft ambient glow blob top-right
+                Positioned(
+                  top: -20,
+                  right: -20,
+                  child: Container(
+                    width: 130.w * _glowAnimation.value,
+                    height: 130.h * _glowAnimation.value,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: const Color(0xFF2196F3).withValues(alpha: 0.12),
+                    ),
+                  ),
+                ),
+                // Animated soft ambient glow blob bottom-left
+                Positioned(
+                  bottom: -30,
+                  left: -30,
+                  child: Container(
+                    width: 140.w * _glowAnimation.value,
+                    height: 140.h * _glowAnimation.value,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: const Color(0xFF9C27B0).withValues(alpha: 0.08),
+                    ),
+                  ),
+                ),
+
+                Padding(
+                  padding: EdgeInsets.all(18.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                if (controller.isExpanded) ...[
+                                  _buildAnimatedAvatar(userName),
+                                  SizedBox(width: 14.w),
+                                ],
+                                Expanded(
+                                  child: Text(
+                                    userName,
+                                    style: TextStyle(
+                                      fontSize: 21.sp,
+                                      fontWeight: FontWeight.bold,
+                                      color: const Color(0xFF1E293B),
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (controller.isExpanded)
+                            Directionality(
+                              textDirection: TextDirection.rtl,
+                              child: OutlinedButton.icon(
+                                onPressed: () async {
+                                  final result = await Get.to(() => UpdateProfile(getProfileResponseModel: getProfileResponseModel));
+                                  if (result != null && result is Map && result["success"] == "success") {
+                                    getProfile();
+                                  }
+                                },
+                                icon: Icon(Icons.edit_outlined, size: 14.sp, color: Colors.blue.shade700),
+                                label: Text("Edit Profile", style: TextStyle(color: Colors.blue.shade700, fontSize: 13.sp, fontWeight: FontWeight.bold)),
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: Colors.white.withValues(alpha: 0.85),
+                                  side: BorderSide(color: Colors.blue.shade600, width: 1.3),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.r),
+                                  ),
+                                  padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 0),
+                                  minimumSize: Size(0, 34.h),
+                                ),
+                              ),
+                            )
+                          else
+                            ElevatedButton(
+                              onPressed: () => Get.off(() => LoginScreen()),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue.shade700,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+                                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                minimumSize: Size(0, 36.h),
+                              ),
+                              child: Text("Login", style: TextStyle(fontSize: 13.sp, color: Colors.white, fontWeight: FontWeight.bold)),
+                            ),
+                        ],
+                      ),
+                      SizedBox(height: 18.h),
+                      if (controller.isExpanded) ...[
+                        _buildProfileDetailRow(Icons.phone_outlined, profile?.phone ?? "N/A"),
+                        SizedBox(height: 10.h),
+                        _buildProfileDetailRow(Icons.email_outlined, profile?.email ?? "N/A"),
+                        if (profile?.address != null && profile!.address.trim().isNotEmpty) ...[
+                          SizedBox(height: 10.h),
+                          _buildProfileDetailRow(Icons.location_on_outlined, profile.address),
+                        ],
+                      ] else ...[
+                        Text("Login or Sign up to view your profile details and manage your account.", style: TextStyle(color: Colors.grey.shade600, fontSize: 14.sp)),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildProfileDetailRow(IconData icon, String text) {
-    return Row(
-      children: [
-        Container(
-          padding: EdgeInsets.all(6.w),
-          decoration: const BoxDecoration(
-            color: Color(0xFFF0F5FE), // Light blue circle
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, size: 14.sp, color: Colors.blue.shade700),
-        ),
-        SizedBox(width: 12.w),
-        Expanded(
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: Colors.black87,
-              fontWeight: FontWeight.w500,
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.85),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: Colors.blue.withValues(alpha: 0.08)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(6.w),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              shape: BoxShape.circle,
             ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            child: Icon(icon, size: 14.sp, color: Colors.blue.shade700),
           ),
-        ),
-      ],
+          SizedBox(width: 10.w),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 13.5.sp,
+                color: const Color(0xFF334155),
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

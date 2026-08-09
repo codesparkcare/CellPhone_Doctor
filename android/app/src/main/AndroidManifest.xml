@@ -10,7 +10,8 @@
     <application
         android:label="The CellPhone Doctor"
         android:name="${applicationName}"
-        android:icon="@mipmap/cell_logo">
+        android:icon="@mipmap/cell_logo"
+        android:roundIcon="@mipmap/cell_logo">
         <activity
             android:name=".MainActivity"
             android:exported="true"

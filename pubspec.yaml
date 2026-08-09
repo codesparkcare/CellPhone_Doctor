@@ -5,7 +5,7 @@ description: "The CellPhone Doctor"
 publish_to: 'none'
 
 # App version
-version: 54.0.0+54
+version: 55.0.0+55
 
 # Dart SDK version
 environment:
@@ -65,6 +65,7 @@ flutter:
   # Asset files
   assets:
     - assets/Icon/
+    - assets/Splash_Video/
     - assets/cart_header/
     - assets/course/
     - assets/images/
