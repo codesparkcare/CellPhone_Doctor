@@ -37,9 +37,19 @@ class _OtpViewState extends State<OtpView> {
     super.initState();
     verificationId = widget.id;
     
-    // Auto-focus on OTP field
+    // Auto-focus on OTP field & listen for automatic SMS retrieval
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _otpFocusNode.requestFocus();
+
+      final OtpController controller = Get.put(OtpController());
+      controller.onCodeAutoFilled = (code) {
+        if (mounted) {
+          setState(() {
+            _otpController.text = code;
+          });
+          _handleOtpSubmit(code);
+        }
+      };
     });
   }
 
@@ -150,6 +160,7 @@ class _OtpViewState extends State<OtpView> {
                           controller: _otpController,
                           focusNode: _otpFocusNode,
                           keyboardType: TextInputType.number,
+                          autofillHints: const [AutofillHints.oneTimeCode],
                           maxLength: 6,
                           autofocus: true,
                           inputFormatters: [

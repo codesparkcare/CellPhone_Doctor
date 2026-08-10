@@ -77,13 +77,17 @@ Widget buildAppNetworkImage({
     );
   }
 
+  // Only use memCacheWidth if both are provided to preserve native aspect ratio and prevent distortion
+  final int? targetMemWidth = memCacheWidth;
+  final int? targetMemHeight = (memCacheWidth != null && memCacheHeight != null) ? null : memCacheHeight;
+
   return CachedNetworkImage(
     imageUrl: cleanUrl,
     fit: fit,
     width: width,
     height: height,
-    memCacheHeight: memCacheHeight,
-    memCacheWidth: memCacheWidth,
+    memCacheHeight: targetMemHeight,
+    memCacheWidth: targetMemWidth,
     placeholder: placeholder != null
         ? (context, url) => placeholder(context, url)
         : (context, url) => Skeletonizer(

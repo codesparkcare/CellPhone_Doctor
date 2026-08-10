@@ -119,12 +119,16 @@ class _LoginScreenState extends State<LoginScreen> {
         timeout: const Duration(seconds: 30),
 
         verificationCompleted: (PhoneAuthCredential credential) async {
+          print("✅ Automatic SMS Verification Completed!");
           try {
             await FirebaseAuth.instance.signInWithCredential(credential);
-            otpController.phoneNumber = phone;
-            await otpController.login();
           } catch (e) {
             print("Auto sign-in error: $e");
+          }
+          if (credential.smsCode != null && credential.smsCode!.isNotEmpty) {
+            otpController.onAutoVerifiedCodeReceived(credential.smsCode!);
+          } else {
+            otpController.onAutoVerifiedWithoutCode();
           }
         },
 

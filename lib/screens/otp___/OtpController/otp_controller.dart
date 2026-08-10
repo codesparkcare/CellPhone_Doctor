@@ -17,8 +17,21 @@ class OtpController extends GetxController {
   int resendTimer = 0;
   Timer? _timer;
   Rxn<LoginResponseModel > loginResponse = Rxn<LoginResponseModel >();
+  Function(String)? onCodeAutoFilled;
 
   final ApiService apiService = ApiService();
+
+  void onAutoVerifiedCodeReceived(String code) {
+    otp = code;
+    if (onCodeAutoFilled != null) {
+      onCodeAutoFilled!(code);
+    }
+    update();
+  }
+
+  void onAutoVerifiedWithoutCode() {
+    login();
+  }
 
   void setVerificationId(String id) {
     verificationId = id;
@@ -70,7 +83,12 @@ class OtpController extends GetxController {
         phoneNumber: formattedPhone,
         timeout: const Duration(seconds: 30),
         verificationCompleted: (PhoneAuthCredential credential) async {
-          // Auto-retrieval or instant verification
+          print("✅ Resend Auto SMS Verification Completed!");
+          if (credential.smsCode != null && credential.smsCode!.isNotEmpty) {
+            onAutoVerifiedCodeReceived(credential.smsCode!);
+          } else {
+            onAutoVerifiedWithoutCode();
+          }
         },
         verificationFailed: (FirebaseAuthException e) {
           print("❌ RESEND OTP FAILED: $e");

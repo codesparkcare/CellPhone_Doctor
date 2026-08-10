@@ -300,26 +300,27 @@ class _ServiceViewState extends State<ServiceView> {
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(8.r),
+                                borderRadius: BorderRadius.circular(10.r),
                                 border: Border.all(color: Colors.grey.withOpacity(0.2)),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.grey.withOpacity(0.1),
+                                    color: Colors.black.withOpacity(0.04),
                                     blurRadius: 4,
                                     offset: const Offset(0, 2),
                                   ),
                                 ],
                               ),
                               child: Padding(
-                                padding: EdgeInsets.all(8.w),
-                                child: buildAppNetworkImage(
-                                  imageUrl: item.logoUrl ?? '',
-                                  fit: BoxFit.contain,
-                                  memCacheWidth: 250,
-                                  memCacheHeight: 250,
-                                  placeholder: (context, url) => Skeletonizer(
-                                    enabled: true,
-                                    child: Container(color: Colors.grey.shade100),
+                                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+                                child: Center(
+                                  child: buildAppNetworkImage(
+                                    imageUrl: item.logoUrl ?? '',
+                                    fit: BoxFit.contain,
+                                    memCacheWidth: 250,
+                                    placeholder: (context, url) => Skeletonizer(
+                                      enabled: true,
+                                      child: Container(color: Colors.grey.shade100),
+                                    ),
                                   ),
                                 ),
                               ),
