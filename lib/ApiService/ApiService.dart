@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:cellphone_doctor/helpers/auth_helper.dart';
@@ -160,10 +161,10 @@ class ApiService {
         required context}) async {
     debugPrint("$baseUrl$uri");
     var token = await AuthHelper.getString("token");
-    debugPrint(token);
     try {
       if (_xsrfToken == null) {
-        await ensureCsrfToken();
+        // Fetch CSRF in background without blocking GET requests
+        unawaited(ensureCsrfToken());
       }
       var headers = _buildHeaders(authorizationToken: isAuthorized == true ? token : null);
       

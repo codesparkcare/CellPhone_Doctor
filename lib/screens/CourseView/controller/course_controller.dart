@@ -82,8 +82,38 @@ class CourseController extends GetxController {
     update();
   }
 
+  bool _wasPlayingBeforeScroll = false;
+  bool _autoPausedByScroll = false;
+
+  void onScrollAwayFromVideo() {
+    if (currentVideoIndex < videoControllers.length) {
+      var controller = videoControllers[currentVideoIndex];
+      if (controller.value.isInitialized && controller.value.isPlaying) {
+        _wasPlayingBeforeScroll = true;
+        _autoPausedByScroll = true;
+        controller.pause();
+        update();
+      }
+    }
+  }
+
+  void onScrollBackToVideo() {
+    if (_autoPausedByScroll) {
+      _autoPausedByScroll = false;
+      if (currentVideoIndex < videoControllers.length) {
+        var controller = videoControllers[currentVideoIndex];
+        if (controller.value.isInitialized && !controller.value.isPlaying && _wasPlayingBeforeScroll) {
+          controller.play();
+          update();
+        }
+      }
+    }
+  }
+
   void onVideoPageChanged(int index) {
     currentVideoIndex = index;
+    _autoPausedByScroll = false;
+    _wasPlayingBeforeScroll = true;
     pauseAllVideos();
     if (index < videoControllers.length &&
         videoControllers[index].value.isInitialized) {
@@ -108,9 +138,13 @@ class CourseController extends GetxController {
       if (controller.value.isInitialized) {
         if (controller.value.isPlaying) {
           controller.pause();
+          _wasPlayingBeforeScroll = false;
+          _autoPausedByScroll = false;
         } else {
           pauseAllVideos(); // ensure siblings are paused
           controller.play();
+          _wasPlayingBeforeScroll = true;
+          _autoPausedByScroll = false;
         }
         update();
       }
@@ -130,6 +164,8 @@ class CourseController extends GetxController {
     if (index < videoControllers.length &&
         videoControllers[index].value.isInitialized) {
       videoControllers[index].play();
+      _wasPlayingBeforeScroll = true;
+      _autoPausedByScroll = false;
       update();
     }
   }

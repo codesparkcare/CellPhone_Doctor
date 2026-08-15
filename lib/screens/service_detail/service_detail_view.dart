@@ -306,7 +306,7 @@ class _SelectScreenState extends State<ServiceDetailScreen> {
 
   Future<void> isLoginFun() async {
     if (isLogin) {
-      // Check if cart has items before navigating
+      // Check if cart has items for the current model before navigating
       try {
         final result = await ApiService.getData(
           uri: "/customer/cart",
@@ -317,18 +317,26 @@ class _SelectScreenState extends State<ServiceDetailScreen> {
         if (result != null) {
           var cartModel = GetCartListResponseModel.fromJson(result);
           if (cartModel.data != null && cartModel.data!.isNotEmpty) {
-            await Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => CartScreen()),
+            final hasCurrentModelInCart = cartModel.data!.any(
+              (item) => item.modelId?.toString() == widget.modelId?.toString(),
             );
-            
-            final cacheKey = "${widget.catergoryId}_${widget.brandId}_${widget.modelId}";
-            ServiceDetailScreen.fullyPrefetchedModels.remove(cacheKey);
-            final prefs = await SharedPreferences.getInstance();
-            await prefs.remove("model_details_json_$cacheKey");
-            fetchCategories();
+
+            if (hasCurrentModelInCart) {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => CartScreen()),
+              );
+
+              final cacheKey = "${widget.catergoryId}_${widget.brandId}_${widget.modelId}";
+              ServiceDetailScreen.fullyPrefetchedModels.remove(cacheKey);
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.remove("model_details_json_$cacheKey");
+              fetchCategories();
+            } else {
+              Get.snackbar("Alert", "Please select a product for this model");
+            }
           } else {
-            Get.snackbar("Alert", "No product available in cart");
+            Get.snackbar("Alert", "Please select a product for this model");
           }
         } else {
           Get.snackbar("Error", "Failed to fetch cart details");

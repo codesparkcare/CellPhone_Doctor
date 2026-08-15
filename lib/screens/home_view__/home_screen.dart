@@ -30,8 +30,15 @@ import 'home_widgets/carousel_area.dart';
 import 'home_widgets/did_u_know.dart';
 import 'home_widgets/service_section.dart';
 import 'home_widgets/topBrand_section.dart';
+import 'home_widgets/brand_trust_banner.dart';
 import 'home_widgets/trusted_section.dart';
 import 'home_widgets/whyUs_section.dart';
+
+GetHomeListModel? _globalHomeMemoryCache;
+
+void setGlobalHomeMemoryCache(GetHomeListModel model) {
+  _globalHomeMemoryCache = model;
+}
 
 GetHomeListModel parseHomeModel(Map<String, dynamic> json) {
   return GetHomeListModel.fromJson(json);
@@ -61,8 +68,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   String _lastWords = '';
   double _level = 0.0;
 
-  GetHomeListModel? getHomeListModel;
-  bool _isLoading = true;
+  GetHomeListModel? getHomeListModel = _globalHomeMemoryCache;
+  bool _isLoading = _globalHomeMemoryCache == null;
   bool _isSearching = false;
   List<Data> _searchResults = [];
   bool _expandCategories = false;
@@ -87,6 +94,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           final decoded = jsonDecode(cachedData);
           if (decoded is Map<String, dynamic>) {
             final cachedModel = parseHomeModel(decoded);
+            _globalHomeMemoryCache = cachedModel;
             if (mounted) {
               setState(() {
                 getHomeListModel = cachedModel;
@@ -121,6 +129,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       if (successResult != null && successResult != "failed" && successResult is Map<String, dynamic>) {
         await prefs.setString('home_api_cache_v1', jsonEncode(successResult));
         final freshModel = parseHomeModel(successResult);
+        _globalHomeMemoryCache = freshModel;
         
         if (mounted) {
           setState(() {
@@ -183,9 +192,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         .take(9)
         .toList();
 
-    // Schedule after 300ms delay to let the page mount and transition smoothly
-    if (kIsWeb) return;
-    Future.delayed(const Duration(milliseconds: 300), () {
+    // Schedule after 100ms delay to let the page mount and transition smoothly
+    Future.delayed(const Duration(milliseconds: 100), () {
       if (!mounted) return;
       try {
         for (final url in bannerUrls) {
@@ -1048,6 +1056,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 child: TopBrandSection(
                   brands: getHomeListModel?.brands,
                 ),
+              ),
+            ),
+
+            SliverToBoxAdapter(
+              child: RepaintBoundary(
+                child: const BrandTrustBanner(),
               ),
             ),
 

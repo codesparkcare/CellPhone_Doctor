@@ -7,7 +7,7 @@ class OurProcessSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 12.w, right: 12.w, top: 2.h, bottom: 10.h),
+      margin: EdgeInsets.only(left: 12.w, right: 12.w, top: 6.h, bottom: 10.h),
       padding: EdgeInsets.only(left: 12.w, right: 12.w, top: 12.h, bottom: 12.h),
       decoration: BoxDecoration(
         color: const Color(0xfff1f8fe),

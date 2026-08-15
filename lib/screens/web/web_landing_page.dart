@@ -362,7 +362,7 @@ class _WebLandingPageState extends State<WebLandingPage> {
         Row(
           children: [
             Image.asset(
-              'assets/images/cell_logo.png',
+              'assets/Icon/Icon.png',
               height: 95,
               fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) {

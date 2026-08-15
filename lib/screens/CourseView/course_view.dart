@@ -41,9 +41,23 @@ class CourseView extends StatelessWidget {
               ),
             ),
           ),
-          body: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: Padding(
+          body: NotificationListener<ScrollNotification>(
+            onNotification: (scrollNotification) {
+              if (scrollNotification is ScrollUpdateNotification) {
+                final double scrollOffset = scrollNotification.metrics.pixels;
+                final double videoThreshold = size.height * 0.18;
+
+                if (scrollOffset > videoThreshold) {
+                  controller.onScrollAwayFromVideo();
+                } else if (scrollOffset <= videoThreshold) {
+                  controller.onScrollBackToVideo();
+                }
+              }
+              return false;
+            },
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 8.w),
               child: Column(
                 children: [
@@ -487,8 +501,9 @@ class CourseView extends StatelessWidget {
               ),
             ),
           ),
-        );
-      },
+        ),
+      );
+    },
     );
   }
 }

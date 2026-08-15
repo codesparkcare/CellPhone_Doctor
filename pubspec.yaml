@@ -5,7 +5,7 @@ description: "The CellPhone Doctor"
 publish_to: 'none'
 
 # App version
-version: 55.0.0+55
+version: 57.0.0+57
 
 # Dart SDK version
 environment:
@@ -38,6 +38,8 @@ dependencies:
   geocoding: ^4.0.0
   url_launcher: ^6.3.2
   webview_flutter: ^4.13.0
+  webview_flutter_android:
+  webview_flutter_wkwebview:
   http:
   path_provider:
   permission_handler:

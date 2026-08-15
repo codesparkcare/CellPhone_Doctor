@@ -10,6 +10,8 @@
 .history
 .svn/
 .swiftpm/
+*.zip
+.00backup/
 migrate_working_dir/
 
 # IntelliJ related
@@ -32,6 +34,8 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+build/
+**/build/
 
 # Symbolication related
 app.*.symbols

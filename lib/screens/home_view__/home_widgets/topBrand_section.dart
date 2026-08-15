@@ -31,7 +31,7 @@ class TopBrandSection extends StatelessWidget {
             return aSeq.compareTo(bSeq);
           });
         return Container(
-          margin: EdgeInsets.only(left: 12.w, right: 12.w, top: 2.h, bottom: 10.h),
+          margin: EdgeInsets.only(left: 12.w, right: 12.w, top: 2.h, bottom: 4.h),
           padding: EdgeInsets.only(left: 12.w, right: 12.w, bottom: 12.w, top: 4.h),
           decoration: BoxDecoration(
             color: const Color(0xfff1f8fe),

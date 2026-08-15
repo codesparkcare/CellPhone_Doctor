@@ -1,7 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:cellphone_doctor/ApiService/ApiService.dart';
+import 'package:cellphone_doctor/models/app/getHomeListModel.dart';
 import 'package:cellphone_doctor/screens/Auth/login_screen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cellphone_doctor/screens/home_view__/home_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
 import '../helpers/auth_helper.dart';
@@ -23,38 +30,98 @@ class _SplashScreenState extends State<SplashScreen> {
   bool _shouldNavigateWhenTargetReady = false;
   Timer? _fallbackTimer;
 
+  bool _isMuted = kIsWeb;
+
   @override
   void initState() {
     super.initState();
+    _prefetchHomeData();
     _initVideoAndAuth();
   }
 
+  Future<void> _prefetchHomeData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final result = await ApiService.getData(
+        uri: "/home",
+        isAuthorized: true,
+        context: null,
+      );
+      if (result != null && result != "failed" && result is Map<String, dynamic>) {
+        await prefs.setString('home_api_cache_v1', jsonEncode(result));
+        debugPrint("✅ Background Prefetch: /home data cached successfully");
+
+        if (mounted) {
+          final model = GetHomeListModel.fromJson(result);
+          setGlobalHomeMemoryCache(model);
+          final imagesToPrecache = <String>[];
+
+          for (var b in (model.banner ?? []).take(3)) {
+            if (b.image != null && b.image!.startsWith('http')) imagesToPrecache.add(b.image!);
+          }
+          for (var c in (model.categories ?? []).take(8)) {
+            if (c.imageUrl != null && c.imageUrl!.startsWith('http')) imagesToPrecache.add(c.imageUrl!);
+          }
+          for (var s in (model.spare ?? []).take(10)) {
+            final url = s.logoUrl ?? s.imageUrl;
+            if (url != null && url.startsWith('http')) imagesToPrecache.add(url);
+          }
+
+          for (final url in imagesToPrecache) {
+            try {
+              precacheImage(CachedNetworkImageProvider(url), context);
+            } catch (_) {}
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint("Splash /home prefetch error: $e");
+    }
+  }
+
   Future<void> _initVideoAndAuth() async {
-    // 1. Initialize Video Player
+    // 1. Initialize Video Player (Web & Mobile Native)
     _controller = VideoPlayerController.asset("assets/Splash_Video/cellphone.mp4");
 
-    _controller.initialize().then((_) {
+    _controller.initialize().then((_) async {
       if (mounted) {
         setState(() {
           _isVideoInitialized = true;
         });
-        _controller.setVolume(1.0);
-        _controller.play();
-        // Add video completion listener AFTER initialization is ready and playing
+        if (kIsWeb) {
+          // Web browsers require muted volume (0.0) for video autoplay
+          await _controller.setVolume(0.0);
+          _isMuted = true;
+        } else {
+          await _controller.setVolume(1.0);
+          _isMuted = false;
+        }
+        try {
+          await _controller.play();
+        } catch (e) {
+          debugPrint("Splash Video play error: $e, retrying muted");
+          await _controller.setVolume(0.0);
+          _isMuted = true;
+          await _controller.play();
+        }
+        // Listen for video completion
         _controller.addListener(_videoListener);
       }
     }).catchError((e) {
       debugPrint("Splash Video initialization error: $e");
-      // Fallback navigation if video fails to initialize
-      _navigateToNextScreen();
+      _shouldNavigateWhenTargetReady = true;
+      if (_targetScreen != null) {
+        _navigateToNextScreen();
+      }
     });
 
     // 2. Fallback timer in case video hangs
-    _fallbackTimer = Timer(const Duration(seconds: 12), () {
+    _fallbackTimer = Timer(const Duration(seconds: 15), () {
+      _shouldNavigateWhenTargetReady = true;
       _navigateToNextScreen();
     });
 
-    // 3. Perform background login/profile status check simultaneously
+    // 3. Perform background auth/profile check simultaneously while video is playing
     try {
       var isOnBoard = await AuthHelper.getBool("isShowOnBoard") ?? false;
       if (mounted) {
@@ -73,15 +140,35 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
+  void _toggleMute() async {
+    if (!_controller.value.isInitialized) return;
+    if (_isMuted || _controller.value.volume == 0) {
+      await _controller.setVolume(1.0);
+      if (mounted) {
+        setState(() {
+          _isMuted = false;
+        });
+      }
+    } else {
+      await _controller.setVolume(0.0);
+      if (mounted) {
+        setState(() {
+          _isMuted = true;
+        });
+      }
+    }
+  }
+
   void _videoListener() {
     if (!_controller.value.isInitialized) return;
 
     final duration = _controller.value.duration;
     final position = _controller.value.position;
 
-    // Only trigger completion when video has actually played beyond start and reached end
+    // Only trigger completion when video has actually played to completion
     if (duration > Duration.zero && position > const Duration(milliseconds: 500)) {
-      if (position >= duration - const Duration(milliseconds: 200)) {
+      if (position >= duration - const Duration(milliseconds: 250)) {
+        _shouldNavigateWhenTargetReady = true;
         _navigateToNextScreen();
       }
     }
@@ -90,11 +177,13 @@ class _SplashScreenState extends State<SplashScreen> {
   void _navigateToNextScreen() {
     if (_hasNavigated) return;
 
-    if (_targetScreen != null) {
+    if (_targetScreen != null && _shouldNavigateWhenTargetReady) {
       _hasNavigated = true;
       _fallbackTimer?.cancel();
-      _controller.removeListener(_videoListener);
-      _controller.pause();
+      try {
+        _controller.removeListener(_videoListener);
+        _controller.pause();
+      } catch (_) {}
       Get.off(() => _targetScreen!);
     } else {
       _shouldNavigateWhenTargetReady = true;
@@ -104,15 +193,23 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void dispose() {
     _fallbackTimer?.cancel();
-    _controller.removeListener(_videoListener);
-    _controller.dispose();
+    try {
+      _controller.removeListener(_videoListener);
+      _controller.dispose();
+    } catch (_) {}
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _navigateToNextScreen,
+      onTap: () {
+        if (_isMuted) {
+          _toggleMute();
+        } else {
+          _navigateToNextScreen();
+        }
+      },
       child: Scaffold(
         backgroundColor: Colors.black,
         body: Stack(
@@ -137,11 +234,63 @@ class _SplashScreenState extends State<SplashScreen> {
                       ),
                     ),
             ),
+
+            // Mute / Unmute Floating Sound Button Badge
+            if (_isVideoInitialized)
+              Positioned(
+                top: 16,
+                right: 16,
+                child: SafeArea(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: _toggleMute,
+                      borderRadius: BorderRadius.circular(30),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.65),
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              _isMuted
+                                  ? Icons.volume_off_rounded
+                                  : Icons.volume_up_rounded,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              _isMuted ? "Click for Sound" : "Sound On",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
     );
   }
+
 }
 
 
