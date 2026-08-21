@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cellphone_doctor/ApiService/ApiService.dart';
 import 'package:cellphone_doctor/models/app/getHomeListModel.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../../helpers/app_toast.dart';
 
 import '../main_screen.dart';
 import '../otp___/otpView.dart';
@@ -135,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
         verificationFailed: (FirebaseAuthException e) {
           print("OTP Error Code: ${e.code}");
           print("OTP Error Message: ${e.message}");
-          Get.snackbar("Verification Failed", e.message ?? "Failed to send OTP. Please check your phone number.");
+          AppToast.showError(e.message ?? "Failed to send OTP. Please check your phone number.", title: "Verification Failed");
         },
 
         codeSent: (String verificationId, int? resendToken) {
@@ -152,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } catch (e) {
       print("Synchronous error during verifyPhoneNumber: $e");
-      Get.snackbar("Error", "Could not request OTP: $e");
+      AppToast.showError("Could not request OTP: $e", title: "Error");
     }
   }
 

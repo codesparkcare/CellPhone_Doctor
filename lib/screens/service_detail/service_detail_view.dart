@@ -1,17 +1,18 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cellphone_doctor/screens/Auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:cellphone_doctor/utils/app_network_image.dart';
 import '../../ApiService/ApiService.dart';
+import '../../helpers/app_toast.dart';
 import '../../helpers/auth_helper.dart';
 import '../../models/app/GetCartListResponseModel.dart' show GetCartListResponseModel;
 import '../../models/app/GetSparePartsResponseModelNew.dart'hide Data;
 import '../../models/app/getSpareResponseModel.dart' ;
 import '../cart/cartView.dart';
+import '../../widgets/login_required_dialog.dart';
 
 
 class CategoryCache {
@@ -38,11 +39,10 @@ class ServiceDetailScreen extends StatefulWidget {
   const ServiceDetailScreen({super.key, this.catergoryId, this.brandId, this.modelId,this.spareID});
 
   // Global static caches
-  static final Map<String, CategoryCache> globalCategoryCaches = {};
   static final Map<dynamic, List<Data>> globalCategoriesCache = {};
+  static final Map<String, CategoryCache> globalCategoryCaches = {};
   static final Set<dynamic> globalFilteredCategoriesKeys = {};
   static final Map<dynamic, List<Data>> globalRawCategoriesCache = {};
-
   static final Set<String> fullyPrefetchedModels = {};
   static final Map<String, Future<void>> _activeFetches = {};
 
@@ -51,16 +51,12 @@ class ServiceDetailScreen extends StatefulWidget {
     required dynamic categoryId,
     required dynamic brandId,
     required dynamic modelId,
-    int? spareID,
-    String userid = "",
+    dynamic spareID,
+    String userid = '',
     bool forceRefresh = false,
   }) async {
-    final cacheKey = "${categoryId}_${brandId}_${modelId}";
-
-    if (!forceRefresh && fullyPrefetchedModels.contains(cacheKey)) return;
-
-    if (!forceRefresh && _activeFetches.containsKey(cacheKey)) {
-      await _activeFetches[cacheKey];
+    final cacheKey = "${categoryId}_${brandId}_$modelId";
+    if (!forceRefresh && fullyPrefetchedModels.contains(cacheKey)) {
       return;
     }
 
@@ -264,44 +260,7 @@ class _SelectScreenState extends State<ServiceDetailScreen> {
   }
 
   void showLoginDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("Please Login"),
-              GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: Icon(Icons.close, color: Colors.grey),
-              )
-            ],
-          ),
-          content: const Text(
-            "You need to login first to continue.",
-            style: TextStyle(fontSize: 14),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                // Navigate to Login Screen
-                Get.to(() => LoginScreen());
-              },
-              child: const Text("Login"),
-            )
-          ],
-        );
-      },
-    );
+    showLoginRequiredDialog(context);
   }
 
   Future<void> isLoginFun() async {
@@ -575,25 +534,7 @@ class _SelectScreenState extends State<ServiceDetailScreen> {
     await prefs.setString('last_added_subname', subName ?? '');
     await prefs.setString('last_added_image', image ?? '');
 
-    String effectiveProductId = currentproductId;
-    try {
-      final cartResult = await ApiService.getData(
-        uri: "/customer/cart",
-        isAuthorized: true,
-        context: context,
-      );
-      if (cartResult != null && cartResult is Map && cartResult['data'] != null) {
-        var cartData = cartResult['data'] as List;
-        if (cartData.isNotEmpty) {
-           var firstItem = cartData.first;
-           if (firstItem['model_id']?.toString() == widget.modelId?.toString()) {
-               if (firstItem['spare'] != null && firstItem['spare']['product_id'] != null) {
-                   effectiveProductId = firstItem['spare']['product_id'].toString();
-               }
-           }
-        }
-      }
-    } catch(e) {}
+    String effectiveProductId = (productId.isNotEmpty && productId != "0") ? productId : currentproductId;
 
     // Prepare multipart request fields
     List<MultipartRequestService> multipartFields = [];
@@ -670,19 +611,21 @@ class _SelectScreenState extends State<ServiceDetailScreen> {
           setState(() {
             products[index] = products[index].copyWith(isCart: 1);
           });
-          Get.snackbar("Success", "Product added to cart");
+          AppToast.showSuccess("Product added to cart");
         } else {
-          Get.snackbar("Failed", message);
+          AppToast.showError(message, title: "Failed");
         }
       } else {
-        Get.snackbar("Failed", "Please try again later");
+        AppToast.showError("Please try again later", title: "Failed");
       }
     } catch (e) {
-      Get.snackbar("Error", "An error occurred. Please try again.");
+      AppToast.showError("An error occurred. Please try again.", title: "Error");
     } finally {
-      setState(() {
-        _isAddingToCart.remove(variantId);
-      });
+      if (mounted) {
+        setState(() {
+          _isAddingToCart.remove(variantId);
+        });
+      }
     }
   }
 
@@ -701,16 +644,18 @@ class _SelectScreenState extends State<ServiceDetailScreen> {
         setState(() {
           products[index] = products[index].copyWith(isCart: 0);
         });
-        Get.snackbar("Success", "Product removed from cart");
+        AppToast.showSuccess("Product removed from cart");
       } else {
-        Get.snackbar("Failed", "Please try again later");
+        AppToast.showError("Please try again later", title: "Failed");
       }
     } catch (_) {
-      Get.snackbar("Error", "An error occurred. Please try again.");
+      AppToast.showError("An error occurred. Please try again.", title: "Error");
     } finally {
-      setState(() {
-        _isRemovingFromCart.remove(variantId);
-      });
+      if (mounted) {
+        setState(() {
+          _isRemovingFromCart.remove(variantId);
+        });
+      }
     }
   }
 

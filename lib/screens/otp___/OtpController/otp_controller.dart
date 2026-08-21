@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import '../../../ApiService/ApiService.dart';
+import '../../../helpers/app_toast.dart';
 import '../../../helpers/auth_helper.dart';
 import '../../../models/auth/LoginResponseModel.dart';
 import '../../ProfileView/create_profile.dart';
@@ -68,7 +69,7 @@ class OtpController extends GetxController {
 
   Future<void> resendOtp(String phoneNumber, {required Function(String) onVerificationIdReceived}) async {
     if (resendTimer > 0 || isResending) {
-      Get.snackbar("Wait", "Please wait ${resendTimer} seconds before requesting again");
+      AppToast.showWarning("Please wait ${resendTimer} seconds before requesting again", title: "Wait");
       return;
     }
 
@@ -92,13 +93,13 @@ class OtpController extends GetxController {
         },
         verificationFailed: (FirebaseAuthException e) {
           print("❌ RESEND OTP FAILED: $e");
-          Get.snackbar("Failed", "Failed to resend OTP: ${e.message}");
+          AppToast.showError("Failed to resend OTP: ${e.message}", title: "Failed");
           isResending = false;
           update();
         },
         codeSent: (String newVerificationId, int? resendToken) {
           print("✅ OTP RESENT SUCCESSFULLY");
-          Get.snackbar("Success", "OTP sent successfully");
+          AppToast.showSuccess("OTP sent successfully", title: "Success");
           onVerificationIdReceived(newVerificationId);
           setVerificationId(newVerificationId);
           isResending = false;
@@ -111,7 +112,7 @@ class OtpController extends GetxController {
       );
     } catch (e) {
       print("❌ RESEND OTP ERROR: $e");
-      Get.snackbar("Error", "Failed to resend OTP");
+      AppToast.showError("Failed to resend OTP", title: "Error");
       isResending = false;
       update();
     }
@@ -126,9 +127,9 @@ class OtpController extends GetxController {
 
   Future<void> login() async {
     if (phoneNumber.length != 10) {
-      Get.snackbar(
-        "Invalid Number",
+      AppToast.showWarning(
         "Please enter a valid 10 digit mobile number",
+        title: "Invalid Number",
       );
       return;
     }
@@ -152,12 +153,14 @@ class OtpController extends GetxController {
 
       // SUCCESS CHECK
       if (loginResponse.value?.token != null && loginResponse.value!.token!.isNotEmpty) {
-        Get.snackbar("Success", loginResponse.value?.message ?? "");
+        String message = loginResponse.value?.message ?? "Login successful";
         String token = loginResponse.value!.token.toString();
         String userId = loginResponse.value!.customer?.id?.toString() ?? "";
 
         // Save session persistently so user does not get logged out
         await AuthHelper.saveSession(token: token, userId: userId);
+
+        AppToast.showSuccess(message, title: "Success");
 
         if (loginResponse.value!.type.toString() != "existing_user") {
           Get.offAll(() => CreateProfileScreen(token: token, number: phoneNumber.toString()));
@@ -165,12 +168,12 @@ class OtpController extends GetxController {
           Get.offAll(() => MainScreen());
         }
       } else {
-        Get.snackbar("Failed", loginResponse.value!.message??"");
+        AppToast.showError(loginResponse.value?.message ?? "Login failed", title: "Failed");
       }
     } catch (e) {
       update();
       print("LOGIN ERROR => $e");
-      Get.snackbar("Error", "Login failed");
+      AppToast.showError("Login failed. Please try again.", title: "Error");
     } finally{
       isLoading = false;
     }

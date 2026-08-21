@@ -17,7 +17,7 @@ import 'package:cellphone_doctor/screens/home_view__/home_widgets/StorySection/s
 import 'package:cellphone_doctor/screens/home_view__/home_widgets/StorySection/story_viewer.dart';
 
 import '../../../../models/app/getStoryListReponseModel.dart';
-import '../../../Auth/login_screen.dart';
+import '../../../../widgets/login_required_dialog.dart';
 import 'package:cellphone_doctor/ApiService/ApiService.dart';
 import 'StoryService.dart';
 import 'dart:typed_data';
@@ -263,44 +263,7 @@ class _CreateStoryCardState extends State<_CreateStoryCard> {
   }
 
   void showLoginDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("Please Login"),
-              GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: Icon(Icons.close, color: Colors.grey),
-              )
-            ],
-          ),
-          content: const Text(
-            "You need to login first to continue.",
-            style: TextStyle(fontSize: 14),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                // Navigate to Login Screen
-                Get.to(() => LoginScreen());
-              },
-              child: const Text("Login"),
-            )
-          ],
-        );
-      },
-    );
+    showLoginRequiredDialog(context);
   }
 
   @override

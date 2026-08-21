@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import '../ProfileView/create_profile.dart';
 import '../main_screen.dart';
 import '../service_detail/service_detail_view.dart';
+import '../../helpers/app_toast.dart';
 import 'OtpController/otp_controller.dart';
 
 class OtpView extends StatefulWidget {
@@ -67,7 +68,7 @@ class _OtpViewState extends State<OtpView> {
     String activeId = verificationId.isNotEmpty ? verificationId : controller.verificationId;
 
     if (activeId.isEmpty && !kIsWeb) {
-      Get.snackbar("Please Wait", "OTP code is still being generated. Please wait a moment.");
+      AppToast.showWarning("OTP code is still being generated. Please wait a moment.", title: "Please Wait");
       return;
     }
 
@@ -92,7 +93,7 @@ class _OtpViewState extends State<OtpView> {
     } catch (e) {
       print("❌ OTP VERIFY ERROR: $e");
       if (mounted && FirebaseAuth.instance.currentUser == null) {
-        Get.snackbar("Failed", "Incorrect OTP: $e");
+        AppToast.showError("Incorrect OTP: $e", title: "Failed");
       }
     } finally {
       if (mounted) {

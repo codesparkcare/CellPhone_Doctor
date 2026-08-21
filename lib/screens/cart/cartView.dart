@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../../ApiService/ApiService.dart';
+import '../../helpers/app_toast.dart';
 import '../../helpers/auth_helper.dart';
 import '../../models/app/GetCartListResponseModel.dart';
 import '../../models/app/getNearByStoreResponseModel.dart';
@@ -177,15 +178,15 @@ class _CartScreenState extends State<CartScreen> {
       print("response$response");
 
       // API failed or null
-      if (response != null || response != "failed") {
-        Get.snackbar("Success", "Product Delete Successfully");
+      if (response != null && response != "failed") {
+        AppToast.showSuccess("Product removed from cart");
         return true;
-      } else{
-        Get.snackbar("Failed", "Order confirmation failed");
+      } else {
+        AppToast.showError("Failed to remove product", title: "Failed");
         return false;
       }
     } catch (e) {
-      Get.snackbar("Error", "Something went wrong");
+      AppToast.showError("Something went wrong. Please try again.", title: "Error");
       return false;
     }
   }
