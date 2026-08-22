@@ -5,7 +5,7 @@ description: "The CellPhone Doctor"
 publish_to: 'none'
 
 # App version
-version: 58.0.0+58
+version: 59.0.0+59
 
 # Dart SDK version
 environment:

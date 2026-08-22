@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:workmanager/workmanager.dart';
@@ -27,6 +28,11 @@ void main() async {
           storageBucket: "the-cellphone-doctor.firebasestorage.app",
         ),
       );
+      if (kDebugMode) {
+        await FirebaseAuth.instance.setSettings(
+          appVerificationDisabledForTesting: true,
+        );
+      }
     } catch (e) {
       debugPrint("Firebase initialization error (Web): $e");
     }

@@ -5,9 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
 
-import '../ProfileView/create_profile.dart';
-import '../main_screen.dart';
-import '../service_detail/service_detail_view.dart';
 import '../../helpers/app_toast.dart';
 import 'OtpController/otp_controller.dart';
 
@@ -106,12 +103,6 @@ class _OtpViewState extends State<OtpView> {
 
   @override
   Widget build(BuildContext context) {
-    final OtpController controller = Get.put(OtpController());
-    final size = MediaQuery.of(context).size;
-
-    final double aspectRatio =
-    (size.height < 700) ? 0.9 : (size.height < 800 ? 1.1 : 1.3);
-
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
@@ -174,7 +165,7 @@ class _OtpViewState extends State<OtpView> {
                           ),
                           onChanged: (value) {
                             setState(() {}); // Refresh UI boxes
-                            if (value.length == 6) {
+                            if (value.length == 6 && !_isVerifying) {
                               _handleOtpSubmit(value);
                             }
                           },
@@ -259,37 +250,53 @@ class _OtpViewState extends State<OtpView> {
                 );
               }
             ),
-            const SizedBox(height: 25),
+            const SizedBox(height: 30),
 
-            GestureDetector(
-              onTap: () {
-                _handleOtpSubmit(_otpController.text);
-              },
-              child: GetBuilder<OtpController>(
-                builder: (controller) {
-                  final bool isActive = _otpController.text.length == 6;
-                  return (controller.isLoading || _isVerifying)
-                      ? const CircularProgressIndicator()
-                      : Container(
+            // Stable non-blinking Verify button with embedded loading spinner
+            GetBuilder<OtpController>(
+              builder: (controller) {
+                final bool isBusy = controller.isLoading || _isVerifying;
+                final bool isComplete = _otpController.text.trim().length == 6;
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: SizedBox(
                     width: double.infinity,
-                    height: 50,
-                    margin: const EdgeInsets.symmetric(horizontal: 20),
-                    decoration: BoxDecoration(
-                      color: (isActive && !_isVerifying) ? Colors.blue : Colors.blue[200],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    alignment: Alignment.center,
-                    child: const Text(
-                      "Verify and Create Profile",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
+                    height: 52,
+                    child: ElevatedButton(
+                      onPressed: (isComplete && !isBusy)
+                          ? () => _handleOtpSubmit(_otpController.text)
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1E88E5),
+                        disabledBackgroundColor: const Color(0xFF90CAF9),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
+                      child: isBusy
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
+                          : const Text(
+                              "Verify and Create Profile",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
+                            ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
 
           ],

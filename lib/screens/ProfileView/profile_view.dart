@@ -6,7 +6,6 @@ import 'package:cellphone_doctor/screens/Auth/login_screen.dart';
 import 'package:cellphone_doctor/screens/ProfileView/profile_controller/profile-controller.dart';
 import 'package:cellphone_doctor/screens/ProfileView/update_profile.dart';
 import 'package:cellphone_doctor/screens/ServiceHistory/service_history_view.dart';
-import 'package:cellphone_doctor/screens/WebScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -15,8 +14,7 @@ import 'package:cellphone_doctor/controller/navBar_controller.dart';
 import '../../ApiService/ApiService.dart';
 import '../../helpers/auth_helper.dart';
 import '../../models/app/getProfileResponseModel.dart';
-import '../service_detail/service_detail_view.dart';
-import 'create_profile.dart';
+import '../../widgets/logout_confirmation_dialog.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -208,35 +206,7 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                             subtitle: "Sign out from your account",
                             isLast: true,
                             onTap: () {
-                              showDialog(
-                                context: Get.context!,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                                    title: const Row(
-                                      children: [
-                                        Icon(Icons.warning_amber_rounded, color: Colors.red),
-                                        SizedBox(width: 8),
-                                        Text("Logout Account"),
-                                      ],
-                                    ),
-                                    content: const Text("Are you sure you want to logout your account?"),
-                                    actions: [
-                                      TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                                        onPressed: () async {
-                                          Navigator.pop(context);
-                                          await AuthHelper.setBool("isShowOnBoard", false);
-                                          await AuthHelper.setString("token", "");
-                                          Get.off(() => LoginScreen());
-                                        },
-                                        child: const Text("Logout"),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
+                              showLogoutConfirmationDialog(context);
                             },
                           ),
                         ] else ...[

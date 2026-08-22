@@ -1,8 +1,7 @@
 import 'package:cellphone_doctor/models/app/getHomeListModel.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:cellphone_doctor/utils/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 // Main Trusted Section Widget
 class TrustedSection extends StatelessWidget {
@@ -178,16 +177,7 @@ class TestimonialCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 18.r,
-                backgroundColor: Colors.grey[800],
-                backgroundImage: customerImage != null && customerImage!.isNotEmpty
-                    ? CachedNetworkImageProvider(customerImage!)
-                    : null,
-                child: (customerImage == null || customerImage!.isEmpty)
-                    ? Icon(Icons.person, color: Colors.grey.shade400, size: 20.sp)
-                    : null,
-              ),
+              _buildAvatar(customerName, customerImage),
               SizedBox(width: 12.w),
               Expanded(
                 child: Column(
@@ -221,6 +211,86 @@ class TestimonialCard extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAvatar(String name, String? image) {
+    final hasImage = image != null &&
+        image.trim().isNotEmpty &&
+        image.trim() != "null" &&
+        image.trim() != "failed";
+    final initial = name.trim().isNotEmpty ? name.trim()[0].toUpperCase() : "";
+
+    // Vibrant avatar colors based on name
+    const colors = [
+      Color(0xFF2563EB), // Blue
+      Color(0xFF7C3AED), // Purple
+      Color(0xFF059669), // Green
+      Color(0xFFD97706), // Amber
+      Color(0xFFDC2626), // Red
+      Color(0xFF0891B2), // Cyan
+      Color(0xFF4F46E5), // Indigo
+      Color(0xFFDB2777), // Pink
+    ];
+    final color = colors[name.hashCode.abs() % colors.length];
+
+    return Container(
+      width: 36.r,
+      height: 36.r,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
+        border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.5),
+      ),
+      child: ClipOval(
+        child: hasImage
+            ? buildAppNetworkImage(
+                imageUrl: image,
+                fit: BoxFit.cover,
+                width: 36.r,
+                height: 36.r,
+                placeholder: (context, url) => Container(
+                  color: color,
+                  alignment: Alignment.center,
+                  child: Text(
+                    initial,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  color: color,
+                  alignment: Alignment.center,
+                  child: initial.isNotEmpty
+                      ? Text(
+                          initial,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : Icon(Icons.person, color: Colors.white, size: 18.sp),
+                ),
+              )
+            : Container(
+                color: color,
+                alignment: Alignment.center,
+                child: initial.isNotEmpty
+                    ? Text(
+                        initial,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : Icon(Icons.person, color: Colors.white, size: 18.sp),
+              ),
       ),
     );
   }

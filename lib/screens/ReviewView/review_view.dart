@@ -1,15 +1,13 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cellphone_doctor/utils/app_colors.dart';
-import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
-import 'package:cellphone_doctor/models/app/review_model.dart';
+import 'package:cellphone_doctor/utils/app_network_image.dart';
 
 import '../../helpers/auth_helper.dart';
 import '../../utils/app-sizes.dart';
@@ -634,16 +632,7 @@ class TestimonialCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              CircleAvatar(
-                  radius: 14.r,
-                  backgroundColor: Colors.white24,
-                  backgroundImage: (image.isNotEmpty && image.startsWith("http"))
-                      ? CachedNetworkImageProvider(image)
-                      : null,
-                  child: (image.isEmpty || !image.startsWith("http"))
-                      ? Icon(Icons.person, size: 18.r, color: Colors.white)
-                      : null,
-              ),
+              _buildAvatar(name, image),
               SizedBox(width: 8.w),
               Expanded(
                 child: Text(
@@ -686,6 +675,86 @@ class TestimonialCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAvatar(String customerName, String? customerImage) {
+    final hasImage = customerImage != null &&
+        customerImage.trim().isNotEmpty &&
+        customerImage.trim() != "null" &&
+        customerImage.trim() != "failed";
+    final initial =
+        customerName.trim().isNotEmpty ? customerName.trim()[0].toUpperCase() : "";
+
+    const colors = [
+      Color(0xFF2563EB), // Blue
+      Color(0xFF7C3AED), // Purple
+      Color(0xFF059669), // Green
+      Color(0xFFD97706), // Amber
+      Color(0xFFDC2626), // Red
+      Color(0xFF0891B2), // Cyan
+      Color(0xFF4F46E5), // Indigo
+      Color(0xFFDB2777), // Pink
+    ];
+    final color = colors[customerName.hashCode.abs() % colors.length];
+
+    return Container(
+      width: 28.r,
+      height: 28.r,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
+        border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.2),
+      ),
+      child: ClipOval(
+        child: hasImage
+            ? buildAppNetworkImage(
+                imageUrl: customerImage,
+                fit: BoxFit.cover,
+                width: 28.r,
+                height: 28.r,
+                placeholder: (context, url) => Container(
+                  color: color,
+                  alignment: Alignment.center,
+                  child: Text(
+                    initial,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  color: color,
+                  alignment: Alignment.center,
+                  child: initial.isNotEmpty
+                      ? Text(
+                          initial,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : Icon(Icons.person, color: Colors.white, size: 15.sp),
+                ),
+              )
+            : Container(
+                color: color,
+                alignment: Alignment.center,
+                child: initial.isNotEmpty
+                    ? Text(
+                        initial,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : Icon(Icons.person, color: Colors.white, size: 15.sp),
+              ),
       ),
     );
   }

@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
   bool _shouldNavigateWhenTargetReady = false;
   Timer? _fallbackTimer;
 
-  bool _isMuted = kIsWeb;
+  bool _isMuted = false;
 
   @override
   void initState() {
@@ -88,21 +88,23 @@ class _SplashScreenState extends State<SplashScreen> {
         setState(() {
           _isVideoInitialized = true;
         });
-        if (kIsWeb) {
-          // Web browsers require muted volume (0.0) for video autoplay
-          await _controller.setVolume(0.0);
-          _isMuted = true;
-        } else {
+
+        // 1. Attempt to play unmuted with 100% sound by default
+        try {
           await _controller.setVolume(1.0);
           _isMuted = false;
-        }
-        try {
           await _controller.play();
         } catch (e) {
-          debugPrint("Splash Video play error: $e, retrying muted");
-          await _controller.setVolume(0.0);
-          _isMuted = true;
-          await _controller.play();
+          debugPrint("Splash Video unmuted autoplay restricted by browser policy, falling back to muted autoplay: $e");
+          // If browser restricts sound without gesture (e.g. mobile Safari / Chrome),
+          // fallback to volume 0.0 so video starts playing immediately without getting stuck!
+          try {
+            await _controller.setVolume(0.0);
+            _isMuted = true;
+            await _controller.play();
+          } catch (err) {
+            debugPrint("Splash Video muted play error: $err");
+          }
         }
         // Listen for video completion
         _controller.addListener(_videoListener);
@@ -115,8 +117,8 @@ class _SplashScreenState extends State<SplashScreen> {
       }
     });
 
-    // 2. Fallback timer in case video hangs
-    _fallbackTimer = Timer(const Duration(seconds: 15), () {
+    // 2. Safe fallback timer in case video hangs
+    _fallbackTimer = Timer(const Duration(seconds: 6), () {
       _shouldNavigateWhenTargetReady = true;
       _navigateToNextScreen();
     });
@@ -203,6 +205,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () {
         if (_isMuted) {
           _toggleMute();
@@ -214,15 +217,25 @@ class _SplashScreenState extends State<SplashScreen> {
         backgroundColor: Colors.black,
         body: Stack(
           children: [
-            // Video Player
+            // Video Player - Full screen coverage without letterboxing or black bars
             Positioned.fill(
               child: _isVideoInitialized
-                  ? Center(
-                      child: AspectRatio(
-                        aspectRatio: _controller.value.aspectRatio > 0
-                            ? _controller.value.aspectRatio
-                            : (9 / 16),
-                        child: VideoPlayer(_controller),
+                  ? ClipRect(
+                      child: SizedBox.expand(
+                        child: FittedBox(
+                          fit: BoxFit.cover,
+                          child: SizedBox(
+                            width: _controller.value.size.width > 0
+                                ? _controller.value.size.width
+                                : (_controller.value.aspectRatio > 0
+                                    ? _controller.value.aspectRatio * 1000
+                                    : 1080),
+                            height: _controller.value.size.height > 0
+                                ? _controller.value.size.height
+                                : 1920,
+                            child: VideoPlayer(_controller),
+                          ),
+                        ),
                       ),
                     )
                   : Container(
@@ -234,57 +247,6 @@ class _SplashScreenState extends State<SplashScreen> {
                       ),
                     ),
             ),
-
-            // Mute / Unmute Floating Sound Button Badge
-            if (_isVideoInitialized)
-              Positioned(
-                top: 16,
-                right: 16,
-                child: SafeArea(
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: _toggleMute,
-                      borderRadius: BorderRadius.circular(30),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.65),
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.3),
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              _isMuted
-                                  ? Icons.volume_off_rounded
-                                  : Icons.volume_up_rounded,
-                              color: Colors.white,
-                              size: 18,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              _isMuted ? "Click for Sound" : "Sound On",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
           ],
         ),
       ),

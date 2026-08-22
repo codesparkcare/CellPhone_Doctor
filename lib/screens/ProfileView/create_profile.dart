@@ -1,12 +1,17 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 import '../../ApiService/ApiService.dart';
+import '../../helpers/app_toast.dart';
 import '../../helpers/auth_helper.dart';
 import '../main_screen.dart';
+import 'widgets/animated_location_button.dart';
 
 class CreateProfileScreen extends StatefulWidget {
   final String token;
@@ -28,20 +33,23 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
-  /// Controllers
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
 
-  /// Submit Profile API
   Future<void> submitProfile() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
-    setState(() => isLoadingProducts = true);
+    setState(() {
+      isLoadingProducts = true;
+    });
 
     List<MultipartRequestService> multipartFields = [];
-    await AuthHelper.setString("token",widget.token);
+    await AuthHelper.setString("token", widget.token);
+
     // Add form fields
     multipartFields.add(MultipartRequestService(
       fieldName: "name",
@@ -52,7 +60,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
     multipartFields.add(MultipartRequestService(
       fieldName: "phone",
-      fieldValue: phoneController.text.trim(),
+      fieldValue: widget.number,
       isField: true,
       isFile: false,
     ));
@@ -79,65 +87,24 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
       isAuthorized: true,
     );
 
-    setState(() => isLoadingProducts = false);
+    setState(() {
+      isLoadingProducts = false;
+    });
 
     if (result != null && result != "failed") {
       await AuthHelper.saveSession(token: widget.token);
-
       Get.offAll(() => MainScreen());
-      Get.snackbar("Success", "Profile Created Successfully");
+      AppToast.showSuccess("Profile Created Successfully", title: "Success");
     } else {
-      Get.snackbar("Failed", "Please try again later");
+      AppToast.showError("Please try again later", title: "Failed");
     }
   }
 
-  /// Detect GPS Location Automatically
-  Future<void> _detectLocation() async {
-    setState(() => isDetectingLocation = true);
-    try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        Get.snackbar(
-          "Enable Location (GPS)",
-          "Opening location settings to enable GPS...",
-          snackPosition: SnackPosition.TOP,
-          duration: const Duration(seconds: 4),
-        );
-        await Geolocator.openLocationSettings();
-        serviceEnabled = await Geolocator.isLocationServiceEnabled();
-        if (!serviceEnabled) {
-          if (mounted) setState(() => isDetectingLocation = false);
-          return;
-        }
-      }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        Get.snackbar(
-          "Permission Required",
-          "Please grant Location permission in Settings",
-          snackPosition: SnackPosition.TOP,
-          duration: const Duration(seconds: 4),
-        );
-        await Geolocator.openAppSettings();
-        if (mounted) setState(() => isDetectingLocation = false);
-        return;
-      }
-
-      if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
-        Position position = await Geolocator.getCurrentPosition(
-          locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
-        );
-
-        List<Placemark> placemarks = await placemarkFromCoordinates(
-          position.latitude,
-          position.longitude,
-        );
-
+  Future<String?> _getAddressFromCoordinates(double lat, double lon) async {
+    // 1. Native geocoding on Mobile if available
+    if (!kIsWeb) {
+      try {
+        List<Placemark> placemarks = await placemarkFromCoordinates(lat, lon);
         if (placemarks.isNotEmpty) {
           Placemark place = placemarks.first;
           List<String> addressParts = [
@@ -147,16 +114,120 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
             if (place.administrativeArea != null && place.administrativeArea!.isNotEmpty) place.administrativeArea!,
             if (place.postalCode != null && place.postalCode!.isNotEmpty) place.postalCode!,
           ];
-          String formattedAddress = addressParts.join(", ");
-          if (formattedAddress.isNotEmpty) {
-            addressController.text = formattedAddress;
-            Get.snackbar("Location Detected", "Address filled automatically!");
+          String formatted = addressParts.join(", ");
+          if (formatted.isNotEmpty) return formatted;
+        }
+      } catch (e) {
+        debugPrint("Native geocoding error: $e, falling back to reverse API");
+      }
+    }
+
+    // 2. HTTP Reverse Geocoding API (Works on Web and Mobile)
+    try {
+      final uri = Uri.parse(
+        'https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lon&zoom=18&addressdetails=1',
+      );
+      final response = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'TheCellPhoneDoctor/1.0',
+        },
+      ).timeout(const Duration(seconds: 3));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        final address = data['address'] as Map<String, dynamic>?;
+        if (address != null) {
+          final road = address['road'] ?? address['street'] ?? '';
+          final suburb = address['suburb'] ?? address['neighbourhood'] ?? address['subdistrict'] ?? '';
+          final city = address['city'] ?? address['town'] ?? address['village'] ?? address['county'] ?? '';
+          final state = address['state'] ?? '';
+          final postcode = address['postcode'] ?? '';
+
+          final parts = [road, suburb, city, state, postcode]
+              .map((e) => e.toString().trim())
+              .where((e) => e.isNotEmpty)
+              .toSet()
+              .toList();
+
+          if (parts.isNotEmpty) {
+            return parts.join(", ");
           }
+        }
+        if (data['display_name'] != null && data['display_name'].toString().isNotEmpty) {
+          return data['display_name'].toString();
         }
       }
     } catch (e) {
+      debugPrint("HTTP Reverse geocoding error: $e");
+    }
+
+    return "$lat, $lon";
+  }
+
+  /// Detect GPS Location Automatically (Works across Web and Mobile)
+  Future<void> _detectLocation() async {
+    setState(() => isDetectingLocation = true);
+    try {
+      if (!kIsWeb) {
+        bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+        if (!serviceEnabled) {
+          AppToast.showInfo("Opening location settings to enable GPS...", title: "Enable GPS");
+          await Geolocator.openLocationSettings();
+          serviceEnabled = await Geolocator.isLocationServiceEnabled();
+          if (!serviceEnabled) {
+            if (mounted) setState(() => isDetectingLocation = false);
+            return;
+          }
+        }
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        AppToast.showWarning("Please grant Location permission in settings", title: "Permission Required");
+        if (!kIsWeb) {
+          await Geolocator.openAppSettings();
+        }
+        if (mounted) setState(() => isDetectingLocation = false);
+        return;
+      }
+
+      if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+        Position? position;
+        try {
+          position = await Geolocator.getLastKnownPosition();
+        } catch (_) {}
+
+        position ??= await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.medium,
+            timeLimit: Duration(seconds: 4),
+          ),
+        );
+
+        String? formattedAddress = await _getAddressFromCoordinates(
+          position.latitude,
+          position.longitude,
+        );
+
+        if (formattedAddress != null && formattedAddress.isNotEmpty) {
+          addressController.text = formattedAddress;
+          AppToast.showSuccess("Address filled automatically!", title: "Location Detected");
+        } else {
+          addressController.text = "${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}";
+          AppToast.showInfo("Coordinates captured: ${addressController.text}", title: "Location Detected");
+        }
+      } else {
+        AppToast.showWarning("Location access was denied. Please enter address manually.", title: "Permission Denied");
+      }
+    } catch (e) {
       debugPrint("Location detection error: $e");
-      Get.snackbar("Error", "Unable to detect current location");
+      AppToast.showInfo("Could not auto-fetch address. You can type your address directly.", title: "Notice");
     } finally {
       if (mounted) {
         setState(() => isDetectingLocation = false);
@@ -273,20 +344,10 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                     icon: Icons.location_on_outlined,
                     controller: addressController,
                     autofillHints: const [AutofillHints.fullStreetAddress],
-                    customSuffixIcon: isDetectingLocation
-                        ? SizedBox(
-                            width: 20.w,
-                            height: 20.h,
-                            child: const Padding(
-                              padding: EdgeInsets.all(12.0),
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.blue),
-                            ),
-                          )
-                        : IconButton(
-                            icon: Icon(Icons.my_location, color: Colors.blue, size: 22.sp),
-                            tooltip: "Detect Current Location",
-                            onPressed: _detectLocation,
-                          ),
+                    customSuffixIcon: AnimatedLocationButton(
+                      isDetecting: isDetectingLocation,
+                      onTap: _detectLocation,
+                    ),
                     validator: (v) {
                       if (v == null || v.trim().isEmpty) return "Enter your address";
                       if (v.trim().length < 5) return "Address must be at least 5 characters";

@@ -42,18 +42,25 @@
       background-color: #F8FAFC;
       margin: 0;
       padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      width: 100vw;
       height: 100vh;
+      overflow: hidden;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
     .app-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      background-color: #F8FAFC;
+      z-index: 999999;
+      transition: opacity 0.35s ease-out;
     }
 
     .app-logo {
@@ -93,6 +100,53 @@
     <div class="spinner"></div>
     <div class="loader-text">Loading The CellPhone Doctor...</div>
   </div>
+
+  <script>
+    var isLoaderHidden = false;
+    function hideAppLoader() {
+      if (isLoaderHidden) return;
+      isLoaderHidden = true;
+      var loader = document.getElementById('loading-indicator');
+      if (loader) {
+        loader.style.opacity = '0';
+        loader.style.pointerEvents = 'none';
+        setTimeout(function() {
+          if (loader && loader.parentNode) {
+            loader.parentNode.removeChild(loader);
+          }
+        }, 350);
+      }
+    }
+
+    // 1. Flutter first frame event
+    window.addEventListener('flutter-first-frame', hideAppLoader);
+
+    // 2. Observer to detect Flutter DOM creation on mobile web
+    var observer = new MutationObserver(function(mutations) {
+      for (var i = 0; i < mutations.length; i++) {
+        var added = mutations[i].addedNodes;
+        for (var j = 0; j < added.length; j++) {
+          var node = added[j];
+          if (node.tagName && (
+            node.tagName.toLowerCase() === 'flutter-view' ||
+            node.tagName.toLowerCase() === 'flt-glass-pane' ||
+            node.tagName.toLowerCase() === 'canvas'
+          )) {
+            hideAppLoader();
+            observer.disconnect();
+            return;
+          }
+        }
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // 3. Safety fallback timer (1.5 seconds)
+    setTimeout(function() {
+      hideAppLoader();
+      observer.disconnect();
+    }, 1800);
+  </script>
 
   <script src="flutter_bootstrap.js" async></script>
 </body>
