@@ -31,8 +31,6 @@ class _SplashScreenState extends State<SplashScreen> {
   Timer? _fallbackTimer;
   Timer? _stallWatchdogTimer;
 
-  bool _isMuted = kIsWeb;
-
   @override
   void initState() {
     super.initState();
@@ -81,47 +79,28 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _initVideoAndAuth() async {
-    // 1. Initialize Video Player (Web & Mobile Native)
+    // 1. Initialize Video Player
     _controller = VideoPlayerController.asset("assets/Splash_Video/cellphone.mp4");
 
     _controller.initialize().then((_) async {
       if (mounted) {
+        if (kIsWeb) {
+          await _controller.setVolume(0.0);
+        } else {
+          await _controller.setVolume(1.0);
+        }
+        await _controller.setLooping(false);
+        await _controller.play();
+
         setState(() {
           _isVideoInitialized = true;
         });
 
-        // Web browsers strictly require muted autoplay to prevent freezing/blocking
-        if (kIsWeb) {
-          try {
-            await _controller.setVolume(0.0);
-            _isMuted = true;
-            await _controller.play();
-          } catch (e) {
-            debugPrint("Splash Video web play error: $e");
-          }
-        } else {
-          // Native mobile: attempt unmuted first, fallback to muted
-          try {
-            await _controller.setVolume(1.0);
-            _isMuted = false;
-            await _controller.play();
-          } catch (e) {
-            debugPrint("Splash Video native unmuted play fallback to muted: $e");
-            try {
-              await _controller.setVolume(0.0);
-              _isMuted = true;
-              await _controller.play();
-            } catch (err) {
-              debugPrint("Splash Video muted play error: $err");
-            }
-          }
-        }
-
         // Listen for video completion
         _controller.addListener(_videoListener);
 
-        // Watchdog: If video does not progress within 2 seconds, trigger navigation
-        _stallWatchdogTimer = Timer(const Duration(milliseconds: 2500), () {
+        // Watchdog: If video does not progress within 3.5 seconds, trigger navigation
+        _stallWatchdogTimer = Timer(const Duration(milliseconds: 3500), () {
           if (!_hasNavigated && mounted) {
             if (_controller.value.position == Duration.zero || !_controller.value.isPlaying) {
               debugPrint("Splash Video stall detected, proceeding to app");
@@ -140,7 +119,7 @@ class _SplashScreenState extends State<SplashScreen> {
     });
 
     // 2. Safe fallback timer in case video hangs or is delayed
-    _fallbackTimer = Timer(const Duration(seconds: 4), () {
+    _fallbackTimer = Timer(const Duration(seconds: 5), () {
       _shouldNavigateWhenTargetReady = true;
       _navigateToNextScreen();
     });
@@ -161,29 +140,6 @@ class _SplashScreenState extends State<SplashScreen> {
       if (_shouldNavigateWhenTargetReady) {
         _navigateToNextScreen();
       }
-    }
-  }
-
-  void _toggleMute() async {
-    if (!_controller.value.isInitialized) return;
-    try {
-      if (_isMuted || _controller.value.volume == 0) {
-        await _controller.setVolume(1.0);
-        if (mounted) {
-          setState(() {
-            _isMuted = false;
-          });
-        }
-      } else {
-        await _controller.setVolume(0.0);
-        if (mounted) {
-          setState(() {
-            _isMuted = true;
-          });
-        }
-      }
-    } catch (e) {
-      debugPrint("Toggle mute error: $e");
     }
   }
 
@@ -243,12 +199,8 @@ class _SplashScreenState extends State<SplashScreen> {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        if (_isMuted) {
-          _toggleMute();
-        } else {
-          _shouldNavigateWhenTargetReady = true;
-          _navigateToNextScreen();
-        }
+        _shouldNavigateWhenTargetReady = true;
+        _navigateToNextScreen();
       },
       child: Scaffold(
         backgroundColor: Colors.black,
@@ -285,91 +237,46 @@ class _SplashScreenState extends State<SplashScreen> {
                     ),
             ),
 
-            // Top bar controls (Skip button & Sound toggle badge)
+            // Top bar Skip Button
             Positioned(
               top: MediaQuery.of(context).padding.top + 16,
-              left: 16,
               right: 16,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Sound Toggle Button
-                  if (_isVideoInitialized)
-                    GestureDetector(
-                      onTap: _toggleMute,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.55),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              _isMuted ? Icons.volume_off : Icons.volume_up,
-                              color: Colors.white,
-                              size: 16,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              _isMuted ? "Tap for Sound" : "Sound On",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  else
-                    const SizedBox.shrink(),
-
-                  // Skip Button
-                  GestureDetector(
-                    onTap: () {
-                      _shouldNavigateWhenTargetReady = true;
-                      _navigateToNextScreen();
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.55),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          width: 1,
-                        ),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            "Skip",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.3,
-                            ),
-                          ),
-                          SizedBox(width: 4),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.white,
-                            size: 11,
-                          ),
-                        ],
-                      ),
+              child: GestureDetector(
+                onTap: () {
+                  _shouldNavigateWhenTargetReady = true;
+                  _navigateToNextScreen();
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.55),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      width: 1,
                     ),
                   ),
-                ],
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Skip",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                      SizedBox(width: 4),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.white,
+                        size: 11,
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],
