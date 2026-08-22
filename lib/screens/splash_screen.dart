@@ -29,8 +29,9 @@ class _SplashScreenState extends State<SplashScreen> {
   bool _hasNavigated = false;
   bool _shouldNavigateWhenTargetReady = false;
   Timer? _fallbackTimer;
+  Timer? _stallWatchdogTimer;
 
-  bool _isMuted = false;
+  bool _isMuted = kIsWeb;
 
   @override
   void initState() {
@@ -89,25 +90,46 @@ class _SplashScreenState extends State<SplashScreen> {
           _isVideoInitialized = true;
         });
 
-        // 1. Attempt to play unmuted with 100% sound by default
-        try {
-          await _controller.setVolume(1.0);
-          _isMuted = false;
-          await _controller.play();
-        } catch (e) {
-          debugPrint("Splash Video unmuted autoplay restricted by browser policy, falling back to muted autoplay: $e");
-          // If browser restricts sound without gesture (e.g. mobile Safari / Chrome),
-          // fallback to volume 0.0 so video starts playing immediately without getting stuck!
+        // Web browsers strictly require muted autoplay to prevent freezing/blocking
+        if (kIsWeb) {
           try {
             await _controller.setVolume(0.0);
             _isMuted = true;
             await _controller.play();
-          } catch (err) {
-            debugPrint("Splash Video muted play error: $err");
+          } catch (e) {
+            debugPrint("Splash Video web play error: $e");
+          }
+        } else {
+          // Native mobile: attempt unmuted first, fallback to muted
+          try {
+            await _controller.setVolume(1.0);
+            _isMuted = false;
+            await _controller.play();
+          } catch (e) {
+            debugPrint("Splash Video native unmuted play fallback to muted: $e");
+            try {
+              await _controller.setVolume(0.0);
+              _isMuted = true;
+              await _controller.play();
+            } catch (err) {
+              debugPrint("Splash Video muted play error: $err");
+            }
           }
         }
+
         // Listen for video completion
         _controller.addListener(_videoListener);
+
+        // Watchdog: If video does not progress within 2 seconds, trigger navigation
+        _stallWatchdogTimer = Timer(const Duration(milliseconds: 2500), () {
+          if (!_hasNavigated && mounted) {
+            if (_controller.value.position == Duration.zero || !_controller.value.isPlaying) {
+              debugPrint("Splash Video stall detected, proceeding to app");
+              _shouldNavigateWhenTargetReady = true;
+              _navigateToNextScreen();
+            }
+          }
+        });
       }
     }).catchError((e) {
       debugPrint("Splash Video initialization error: $e");
@@ -117,8 +139,8 @@ class _SplashScreenState extends State<SplashScreen> {
       }
     });
 
-    // 2. Safe fallback timer in case video hangs
-    _fallbackTimer = Timer(const Duration(seconds: 6), () {
+    // 2. Safe fallback timer in case video hangs or is delayed
+    _fallbackTimer = Timer(const Duration(seconds: 4), () {
       _shouldNavigateWhenTargetReady = true;
       _navigateToNextScreen();
     });
@@ -144,20 +166,24 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _toggleMute() async {
     if (!_controller.value.isInitialized) return;
-    if (_isMuted || _controller.value.volume == 0) {
-      await _controller.setVolume(1.0);
-      if (mounted) {
-        setState(() {
-          _isMuted = false;
-        });
+    try {
+      if (_isMuted || _controller.value.volume == 0) {
+        await _controller.setVolume(1.0);
+        if (mounted) {
+          setState(() {
+            _isMuted = false;
+          });
+        }
+      } else {
+        await _controller.setVolume(0.0);
+        if (mounted) {
+          setState(() {
+            _isMuted = true;
+          });
+        }
       }
-    } else {
-      await _controller.setVolume(0.0);
-      if (mounted) {
-        setState(() {
-          _isMuted = true;
-        });
-      }
+    } catch (e) {
+      debugPrint("Toggle mute error: $e");
     }
   }
 
@@ -166,22 +192,31 @@ class _SplashScreenState extends State<SplashScreen> {
 
     final duration = _controller.value.duration;
     final position = _controller.value.position;
+    final isCompleted = _controller.value.isCompleted;
 
-    // Only trigger completion when video has actually played to completion
-    if (duration > Duration.zero && position > const Duration(milliseconds: 500)) {
-      if (position >= duration - const Duration(milliseconds: 250)) {
-        _shouldNavigateWhenTargetReady = true;
-        _navigateToNextScreen();
-      }
+    // Trigger completion when video finishes or nears the end
+    if (isCompleted ||
+        (duration > Duration.zero &&
+            position > const Duration(milliseconds: 300) &&
+            position >= duration - const Duration(milliseconds: 250)) ||
+        (!_controller.value.isPlaying &&
+            position > const Duration(milliseconds: 500) &&
+            position >= duration - const Duration(milliseconds: 400))) {
+      _shouldNavigateWhenTargetReady = true;
+      _navigateToNextScreen();
     }
   }
 
   void _navigateToNextScreen() {
     if (_hasNavigated) return;
 
-    if (_targetScreen != null && _shouldNavigateWhenTargetReady) {
+    // Ensure fallback default screen if auth check is still resolving
+    _targetScreen ??= const LoginScreen();
+
+    if (_shouldNavigateWhenTargetReady) {
       _hasNavigated = true;
       _fallbackTimer?.cancel();
+      _stallWatchdogTimer?.cancel();
       try {
         _controller.removeListener(_videoListener);
         _controller.pause();
@@ -195,6 +230,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void dispose() {
     _fallbackTimer?.cancel();
+    _stallWatchdogTimer?.cancel();
     try {
       _controller.removeListener(_videoListener);
       _controller.dispose();
@@ -210,6 +246,7 @@ class _SplashScreenState extends State<SplashScreen> {
         if (_isMuted) {
           _toggleMute();
         } else {
+          _shouldNavigateWhenTargetReady = true;
           _navigateToNextScreen();
         }
       },
@@ -247,12 +284,99 @@ class _SplashScreenState extends State<SplashScreen> {
                       ),
                     ),
             ),
+
+            // Top bar controls (Skip button & Sound toggle badge)
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 16,
+              left: 16,
+              right: 16,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Sound Toggle Button
+                  if (_isVideoInitialized)
+                    GestureDetector(
+                      onTap: _toggleMute,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.55),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              _isMuted ? Icons.volume_off : Icons.volume_up,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              _isMuted ? "Tap for Sound" : "Sound On",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  else
+                    const SizedBox.shrink(),
+
+                  // Skip Button
+                  GestureDetector(
+                    onTap: () {
+                      _shouldNavigateWhenTargetReady = true;
+                      _navigateToNextScreen();
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.55),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          width: 1,
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "Skip",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                          SizedBox(width: 4),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.white,
+                            size: 11,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
-
 }
 
 
